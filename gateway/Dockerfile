@@ -7,6 +7,6 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -buildvcs=false -o segmentService ./cmd/app/
+RUN go build -o gateway ./cmd/text-markup/
 
-CMD ["./segmentService"]
+CMD ["./gateway"]

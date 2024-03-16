@@ -1,10 +1,10 @@
 .PHONY: start stop cover lint
 
 start:
-	docker compose up -d --build
+	docker-compose up -d --build
 
 stop:
-	docker compose down
+	docker-compose down
 
 cover:
 	go test -v -coverpkg=./... -coverprofile report.out -covermode=atomic ./...

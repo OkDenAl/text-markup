@@ -6,8 +6,6 @@ volumes:
 services:
   server:
     container_name: server
-    build: ..
-    env_file:
-      - .env
+    build: .
     ports:
-      - "${HTTP_PORT}:${HTTP_PORT}"
+      - "8090:8090"
