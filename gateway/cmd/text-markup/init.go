@@ -1,18 +1,32 @@
 package main
 
 import (
+	"github.com/OkDenAl/text-markup-gateway/internal/config"
+	"github.com/OkDenAl/text-markup-gateway/internal/handler"
+	"github.com/OkDenAl/text-markup-gateway/internal/handler/middleware"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 )
 
-func newHTTPServer(port string) *http.Server {
+func newHTTPServer(cfg config.Server, h handler.Handler) *http.Server {
 	gin.SetMode(gin.ReleaseMode)
-	handler := gin.New()
-	api := handler.Group("text-markup/v1", handler.LoggerMiddleware(log), gin.Recovery())
-	{
-		segmentPort.SetRouter(api, services.SegmentService)
-		userSegmentPort.SetRouter(api, services.UserSegmentService)
-		operationPort.SetRouter(api, services.OperationService)
+	engine := gin.New()
+	api := engine.Group("text-markup/v1", middleware.LoggerMiddleware(), gin.Recovery())
+	h.SetRouter(api)
+	return &http.Server{Addr: cfg.Port, Handler: engine}
+}
+
+func setupConfig() (*config.Config, error) {
+	const (
+		configPathEnv     = "CONFIG_PATH"
+		defaultConfigPath = "./config/local_config.yml"
+	)
+
+	configPath := os.Getenv(configPathEnv)
+	if configPath == "" {
+		configPath = defaultConfigPath
 	}
-	return &http.Server{Addr: port, Handler: handler}
+
+	return config.New(configPath)
 }

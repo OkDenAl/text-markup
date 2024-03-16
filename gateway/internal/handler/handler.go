@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"github.com/OkDenAl/text-markup-gateway/internal/domain"
+	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )
 
@@ -17,10 +18,14 @@ type Handler struct {
 	mlMarkup iMLMarkup
 }
 
-func NewHandler(mlMarkup iMLMarkup) (Handler, error) {
+func New(mlMarkup iMLMarkup) (Handler, error) {
 	if mlMarkup == nil {
 		return Handler{}, ErrValidationFailed
 	}
 
 	return Handler{mlMarkup}, nil
+}
+
+func (h Handler) SetRouter(api *gin.RouterGroup) {
+	api.GET("/get/markup", getMarkup(h.mlMarkup))
 }
