@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ml_text_markup.v1;
+
+option go_package = "github.com/OkDenAl/text-markup/ml-markup-apis/v1;mlmarkupv1";
+
+import "google/protobuf/empty.proto";
+
+service MlMarkupService {
+
+}
