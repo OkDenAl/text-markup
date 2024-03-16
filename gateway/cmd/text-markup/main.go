@@ -4,6 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/OkDenAl/text-markup-gateway/internal/handler"
+	"github.com/OkDenAl/text-markup-gateway/internal/repo/ml-markup/httpl"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/sync/errgroup"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,14 +16,38 @@ import (
 )
 
 func main() {
-	server := NewServe
+	defer func() {
+		if recover() != nil {
+			os.Exit(1)
+		}
+	}()
 
+	cfg, err := setupConfig()
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal().Msg("cant setup cfg")
+	}
+
+	mlClient := httpl.NewClient()
+
+	mlMarkupRepo, err := httpl.NewMLMarkupRepo(mlClient)
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal().Msg("cant setup mlMarkupRepo")
+	}
+
+	h, err := handler.New(mlMarkupRepo)
+	if err != nil {
+		log.Fatal().Msg("cant setup handler")
+	}
+
+	server := newHTTPServer(cfg.Server, h)
 	g, ctx := errgroup.WithContext(context.Background())
 	gracefulShutdown(ctx, g)
 
 	g.Go(func() error {
-		log.Infof("starting http server on port: %s\n", server.Addr)
-		defer log.Infof("closing http server on port: %s\n", server.Addr)
+		log.Print("starting httpl server on port: %s\n", server.Addr)
+		defer log.Print("closing httpl server on port: %s\n", server.Addr)
 
 		errCh := make(chan error)
 
@@ -28,7 +56,7 @@ func main() {
 			defer cancel()
 
 			if err := server.Shutdown(shCtx); err != nil {
-				log.Infof("can't close http server listening on %s: %s", server.Addr, err.Error())
+				log.Print("can't close httpl server listening on %s: %s", server.Addr, err.Error())
 			}
 
 			close(errCh)
@@ -36,6 +64,7 @@ func main() {
 
 		go func() {
 			if err = server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+				fmt.Println(err)
 				errCh <- err
 			}
 		}()
@@ -43,12 +72,12 @@ func main() {
 		case <-ctx.Done():
 			return ctx.Err()
 		case err = <-errCh:
-			return fmt.Errorf("http server can't listen and serve requests: %w", err)
+			return fmt.Errorf("httpl server can't listen and serve requests: %w", err)
 		}
 	})
 
 	if err = g.Wait(); err != nil {
-		log.Infof("gracefully shutting down the server: %s\n", err.Error())
+		log.Print("gracefully shutting down the server: %s\n", err.Error())
 	}
 }
 
