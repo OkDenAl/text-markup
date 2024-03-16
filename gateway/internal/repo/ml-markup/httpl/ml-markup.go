@@ -24,7 +24,7 @@ func (r MLMarkupRepo) GetEntitiesFromText(ctx context.Context, text string) (dom
 	}
 	var te domain.TextEntities
 	for i, label := range resp.Labels {
-		if label != "0" {
+		if label != "O" {
 			te.Tags = append(te.Tags, resp.Tokens[i])
 		}
 	}

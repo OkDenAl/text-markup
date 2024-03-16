@@ -26,7 +26,7 @@ func (c MlClient) GetPrediction(reqData model.TextMarkupRequest) (MLResponse, er
 	log.Println("here")
 
 	req, err := http.NewRequest(
-		"GET", "http://localhost:8080/get_prediction", bytes.NewBuffer(reqJSON),
+		"GET", "http://127.0.0.1:8091/get_prediction", bytes.NewBuffer(reqJSON),
 	)
 
 	resp, err := c.client.Do(req)

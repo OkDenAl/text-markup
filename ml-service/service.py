@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from transformers import AutoTokenizer, AutoModelForTokenClassification
-import torch
+# from transformers import AutoTokenizer, AutoModelForTokenClassification
+# import torch
 import uvicorn
 from pydantic import BaseModel
 
@@ -35,7 +35,7 @@ app = FastAPI()
 #     except Exception as e:
 #         print(e)
 
-@app.post("/get_prediction")
+@app.get("/get_prediction")
 async def get_prediction(item: Item):
     try:
         text = item.text
@@ -50,4 +50,4 @@ async def get_prediction(item: Item):
         print(e)
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8080)
+    uvicorn.run(app, host="127.0.0.1", port=8091)
