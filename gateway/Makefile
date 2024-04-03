@@ -1,4 +1,4 @@
-.PHONY: start stop cover lint
+.PHONY: start stop cover lint build
 
 start:
 	docker-compose up -d --build
@@ -12,10 +12,12 @@ cover:
 	go tool cover -func=report1.out
 
 lint:
-	golangci-lint run
+	golangci-lint run ./...
 
-test:
-	go test -v ./...
+prod:
+	@mv ./docker-compose.yml ./docker-compose-dev.yml
+	@cp ./prod/docker-compose.yml ./docker-compose.yml
+	@docker compose up --build -d
+	@rm ./docker-compose.yml
+	@mv ./docker-compose-dev.yml ./docker-compose.yml
 
-mockgen:
-	go generate ./...

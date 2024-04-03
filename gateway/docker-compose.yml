@@ -5,7 +5,14 @@ volumes:
 
 services:
   server:
-    container_name: server
+    restart: always
     build: .
+    container_name: server
     ports:
       - "8090:8090"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    external: true

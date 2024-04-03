@@ -11,7 +11,7 @@ type (
 		Server `yaml:"server" validate:"required"`
 	}
 	Server struct {
-		Host string `yaml:"host" validate:"required"`
+		Host string `yaml:"host" validate:"required" env:"HTTP_HOST"`
 		Port string `yaml:"port" validate:"required" env:"HTTP_PORT"`
 	}
 )
@@ -19,6 +19,11 @@ type (
 func New(configPath string) (*Config, error) {
 	cfg := &Config{}
 	err := cleanenv.ReadConfig(configPath, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("error reading config - %w", err)
+	}
+
+	err = cleanenv.UpdateEnv(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("error updating env - %w", err)
 	}
