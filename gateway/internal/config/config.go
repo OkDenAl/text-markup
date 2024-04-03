@@ -11,7 +11,7 @@ type (
 		Server `yaml:"server" validate:"required"`
 	}
 	Server struct {
-		Host string `yaml:"host" validate:"required" env:"HTTP_HOST"`
+		Host string `yaml:"host" env:"HTTP_HOST"`
 		Port string `yaml:"port" validate:"required" env:"HTTP_PORT"`
 	}
 )

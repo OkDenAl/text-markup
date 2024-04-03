@@ -12,7 +12,7 @@ import (
 func newHTTPServer(cfg config.Server, h handler.Handler) *http.Server {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.New()
-	api := engine.Group("text-markup/v1", middleware.LoggerMiddleware(), gin.Recovery())
+	api := engine.Group("api/v1", middleware.LoggerMiddleware(), gin.Recovery())
 	h.SetRouter(api)
 	return &http.Server{Addr: cfg.Port, Handler: engine}
 }

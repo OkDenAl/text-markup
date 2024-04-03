@@ -54,5 +54,5 @@ jobs:
 #          script: |
 #            cd app/
 #            git pull
-#            sudo docker-compose up -d
+#            sudo docker-compose.yml up -d
 #            make create_tables

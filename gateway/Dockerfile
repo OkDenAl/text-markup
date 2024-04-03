@@ -7,10 +7,7 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o gateway ./cmd/text-markup/
 
-FROM scratch
-WORKDIR /
-COPY --from=builder /app/gateway /gateway
 
 EXPOSE 8080
 
-CMD ["/gateway"]
+CMD ["./gateway"]
