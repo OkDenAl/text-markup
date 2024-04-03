@@ -1,8 +1,5 @@
 version: "3.9"
 
-volumes:
-  db-volume:
-
 services:
   server:
     restart: always
@@ -10,9 +7,8 @@ services:
     container_name: server
     ports:
       - "8090:8090"
-    networks:
-      - mynetwork
+    networks: [backend]
 
 networks:
-  mynetwork:
-    external: true
+  backend:
+    driver: bridge

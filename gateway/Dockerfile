@@ -5,7 +5,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -tags=jsoniter -o gateway ./cmd/text-markup/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o gateway ./cmd/text-markup/
 
 FROM scratch
 WORKDIR /
