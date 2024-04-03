@@ -9,7 +9,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -tags=jsoniter -o gateway ./cmd/text-marku
 
 FROM scratch
 WORKDIR /
-COPY --from=build /app/gateway /gateway
+COPY --from=builder /app/gateway /gateway
 
 EXPOSE 8080
 
