@@ -34,9 +34,9 @@ jobs:
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             cd ./text-markup/gateway/
             sudo make stop
-            sudo docker rmi $(sudo docker images -a | grep ${{ secrets.DOCKER_USER }} | awk '{print $3}')
-            sudo docker pull ${{ secrets.DOCKER_USER }}/server
-            sudo docker pull ${{ secrets.DOCKER_USER }}/ml
+            sudo docker rmi $(sudo docker images -a | grep ${{ secrets.DOCKER_USERNAME }} | awk '{print $3}')
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/server
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ml
       - name: run project
         uses: appleboy/ssh-action@master
         with:
