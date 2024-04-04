@@ -1,4 +1,4 @@
-name: Gateway Workflow
+name: Ml Workflow
 on:
   pull_request:
     branches: [ "main" ]
