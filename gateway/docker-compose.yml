@@ -6,17 +6,26 @@ services:
     container_name: nginx
     volumes:
       - ${NGINX_CONFIG_PATH}:/etc/nginx/nginx.conf
-      - ./dist:/usr/share/nginx/html
+      - ../frontend:/usr/share/nginx/html
     ports: [ '${NGINX_HTTP_PORT}:80' ]
-    depends_on: [ backend ]
+    depends_on: [ gateway ]
     networks: [ backend ]
     restart: always
-  backend:
+
+  gateway:
     build: .
-    container_name: backend
+    container_name: gateway
     ports:
       - "8000:8000"
     networks: [backend]
+    restart: always
+
+  ml:
+    build: ../ml-service
+    container_name: ml
+    ports:
+      - "8001:8001"
+    networks: [ backend ]
     restart: always
 
 networks:

@@ -1,0 +1,10 @@
+env: prod
+log_level: info
+
+http_server:
+  port: 8000
+
+ml_client:
+  port: 8091
+  host: ml
+  timeout: 5ms

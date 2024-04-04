@@ -1,2 +1,11 @@
-server:
-  port: :8000
+env: local
+log_level: debug
+
+http_server:
+  port: 8000
+
+ml_client:
+  port: 8001
+  host: ml
+  timeout: 5ms
+

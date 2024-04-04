@@ -3,9 +3,11 @@ package httpl
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"github.com/OkDenAl/text-markup-gateway/internal/config"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/model"
+	"github.com/rs/zerolog/log"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -14,23 +16,27 @@ type iMLClient interface {
 }
 
 type MlClient struct {
+	cfg    config.ClientConfig
 	client http.Client
 }
 
-func NewClient() MlClient {
-	return MlClient{client: http.Client{}}
+func NewClient(cfg config.ClientConfig) MlClient {
+	return MlClient{client: http.Client{}, cfg: cfg}
 }
 
 func (c MlClient) GetPrediction(reqData model.TextMarkupRequest) (MLResponse, error) {
 	reqJSON, err := json.Marshal(reqData)
-	log.Println("here")
 
 	req, err := http.NewRequest(
-		"GET", "http://127.0.0.1:8091/get_prediction", bytes.NewBuffer(reqJSON),
+		"GET", fmt.Sprintf("http://%s:%s/get_prediction", c.cfg.Host, c.cfg.Port), bytes.NewBuffer(reqJSON),
 	)
+	if err != nil {
+		return MLResponse{}, err
+	}
 
 	resp, err := c.client.Do(req)
 	if err != nil {
+		log.Error().Stack().Err(err).Msg("error")
 		return MLResponse{}, err
 	}
 	defer resp.Body.Close()

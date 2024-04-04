@@ -24,30 +24,28 @@ func main() {
 
 	cfg, err := setupConfig()
 	if err != nil {
-		fmt.Println(err)
-		log.Fatal().Msg("cant setup cfg")
+		log.Fatal().Stack().Err(err).Msg("failed to setup cfg")
 	}
 
-	mlClient := httpl.NewClient()
+	mlClient := httpl.NewClient(cfg.MLClient)
 
 	mlMarkupRepo, err := httpl.NewMLMarkupRepo(mlClient)
 	if err != nil {
-		fmt.Println(err)
-		log.Fatal().Msg("cant setup mlMarkupRepo")
+		log.Fatal().Stack().Err(err).Msg("failed to setup mlMarkupRepo")
 	}
 
 	h, err := handler.New(mlMarkupRepo)
 	if err != nil {
-		log.Fatal().Msg("cant setup handler")
+		log.Fatal().Stack().Err(err).Msg("failed to setup handler")
 	}
 
-	server := newHTTPServer(cfg.Server, h)
+	server := newHTTPServer(cfg.HTTP, h)
 	g, ctx := errgroup.WithContext(context.Background())
 	gracefulShutdown(ctx, g)
 
 	g.Go(func() error {
-		log.Print("starting httpl server on port: %s\n", server.Addr)
-		defer log.Print("closing httpl server on port: %s\n", server.Addr)
+		log.Info().Msgf("starting httpl server on port: %s\n", server.Addr)
+		defer log.Info().Msgf("closing httpl server on port: %s\n", server.Addr)
 
 		errCh := make(chan error)
 
@@ -56,7 +54,7 @@ func main() {
 			defer cancel()
 
 			if err := server.Shutdown(shCtx); err != nil {
-				log.Print("can't close httpl server listening on %s: %s", server.Addr, err.Error())
+				log.Error().Stack().Err(err).Msgf("can't close http server listening on %s", server.Addr)
 			}
 
 			close(errCh)
@@ -77,7 +75,7 @@ func main() {
 	})
 
 	if err = g.Wait(); err != nil {
-		log.Print("gracefully shutting down the server: %s\n", err.Error())
+		log.Fatal().Stack().Err(err).Msg("gracefully shutting down the server")
 	}
 }
 

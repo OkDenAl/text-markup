@@ -27,5 +27,5 @@ func New(mlMarkup iMLMarkup) (Handler, error) {
 }
 
 func (h Handler) SetRouter(api *gin.RouterGroup) {
-	api.GET("/get/markup", getMarkup(h.mlMarkup))
+	api.POST("/get/markup", getMarkup(h.mlMarkup))
 }

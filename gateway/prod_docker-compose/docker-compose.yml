@@ -1,6 +1,7 @@
 version: "3.9"
 
 services:
+
   nginx:
     image: nginx
     container_name: nginx
@@ -13,11 +14,18 @@ services:
     depends_on: [ backend ]
     networks: [ backend ]
     restart: always
-  backend:
+
+  gateway:
     build: .
-    container_name: backend
+    container_name: gateway
     environment: ['CONFIG_PATH=${CONFIG_PATH}']
     networks: [backend]
+    restart: always
+
+  ml:
+    build: ../ml-service
+    container_name: ml
+    networks: [ backend ]
     restart: always
 
 networks:

@@ -4,15 +4,25 @@ import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/ilyakaznacheev/cleanenv"
+	"time"
 )
 
 type (
 	Config struct {
-		Server `yaml:"server" validate:"required"`
+		Env      string       `yaml:"env" validate:"required,oneof=prod local"`
+		LogLevel string       `yaml:"log_level" validate:"required"`
+		HTTP     ServerConfig `yaml:"http_server" validate:"required"`
+		MLClient ClientConfig `yaml:"ml_client" validate:"required"`
 	}
-	Server struct {
-		Host string `yaml:"host" env:"HTTP_HOST"`
+
+	ServerConfig struct {
 		Port string `yaml:"port" validate:"required" env:"HTTP_PORT"`
+	}
+
+	ClientConfig struct {
+		Host    string        `yaml:"host" validate:"required"`
+		Port    string        `yaml:"port" validate:"required"`
+		Timeout time.Duration `yaml:"timeout" validate:"required"`
 	}
 )
 
@@ -20,12 +30,7 @@ func New(configPath string) (*Config, error) {
 	cfg := &Config{}
 	err := cleanenv.ReadConfig(configPath, cfg)
 	if err != nil {
-		return nil, fmt.Errorf("error reading config - %w", err)
-	}
-
-	err = cleanenv.UpdateEnv(cfg)
-	if err != nil {
-		return nil, fmt.Errorf("error updating env - %w", err)
+		return nil, fmt.Errorf("failed to read config: %w", err)
 	}
 
 	validate := validator.New()

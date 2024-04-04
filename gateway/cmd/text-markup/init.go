@@ -9,12 +9,12 @@ import (
 	"os"
 )
 
-func newHTTPServer(cfg config.Server, h handler.Handler) *http.Server {
+func newHTTPServer(cfg config.ServerConfig, h handler.Handler) *http.Server {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.New()
-	api := engine.Group("api/v1", middleware.LoggerMiddleware(), gin.Recovery())
+	api := engine.Group("api/v1", middleware.Logger(), middleware.CORS(), gin.Recovery())
 	h.SetRouter(api)
-	return &http.Server{Addr: cfg.Port, Handler: engine}
+	return &http.Server{Addr: ":" + cfg.Port, Handler: engine}
 }
 
 func setupConfig() (*config.Config, error) {
