@@ -15,6 +15,6 @@ jobs:
           cd ./ml-service
           sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/ml:latest -f ./Dockerfile .
           cd ..
-      - name: Push the image
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/ml --all-tags
+#      - name: Push the image
+#        run: |
+#          docker push ${{ secrets.DOCKER_USERNAME }}/ml --all-tags
