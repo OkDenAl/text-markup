@@ -13,7 +13,7 @@ on:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             cd app/
             sudo docker compose down
             sudo docker rmi $(sudo docker images -a | grep ${{ secrets.DOCKER_USER }} | awk '{print $3}')
