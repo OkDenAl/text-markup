@@ -1,4 +1,4 @@
-.PHONY: start stop cover lint build
+.PHONY: start stop cover lint build prod
 
 start:
 	docker-compose up -d --build
