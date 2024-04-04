@@ -3,6 +3,8 @@ log_level: info
 
 http_server:
   port: 8000
+  read_timeout: 5s
+  write_timeout: 5s
 
 ml_client:
   port: 8001

@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/ilyakaznacheev/cleanenv"
-	"time"
 )
 
 type (
@@ -16,7 +17,9 @@ type (
 	}
 
 	ServerConfig struct {
-		Port string `yaml:"port" validate:"required" env:"HTTP_PORT"`
+		Port         string        `yaml:"port" validate:"required" env:"HTTP_PORT"`
+		ReadTimeout  time.Duration `yaml:"read_timeout" validate:"required"`
+		WriteTimeout time.Duration `yaml:"write_timeout" validate:"required"`
 	}
 
 	ClientConfig struct {
