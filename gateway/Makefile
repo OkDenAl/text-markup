@@ -1,4 +1,4 @@
-.PHONY: start stop cover lint build prod
+.PHONY: start stop cover lint build prod-stop prod-start
 
 start:
 	docker-compose up -d --build
@@ -14,10 +14,17 @@ cover:
 lint:
 	golangci-lint run ./...
 
-prod:
+prod-stop:
 	@mv ./docker-compose.yml ./docker-compose-dev.yml
 	@cp ./prod/docker-compose.yml ./docker-compose.yml
-	@docker compose up --build -d
+	@make stop
+	@rm ./docker-compose.yml
+	@mv ./docker-compose-dev.yml ./docker-compose.yml
+
+prod-start:
+	@mv ./docker-compose.yml ./docker-compose-dev.yml
+	@cp ./prod/docker-compose.yml ./docker-compose.yml
+	@make start
 	@rm ./docker-compose.yml
 	@mv ./docker-compose-dev.yml ./docker-compose.yml
 
