@@ -28,7 +28,7 @@ func (c MlClient) GetPrediction(reqData model.TextMarkupRequest) (MLResponse, er
 	reqJSON, err := json.Marshal(reqData)
 
 	req, err := http.NewRequest(
-		"GET", fmt.Sprintf("http://%s:%s/get_prediction", c.cfg.Host, c.cfg.Port), bytes.NewBuffer(reqJSON),
+		"GET", fmt.Sprintf("http://%s:%s/api/v1/prediction", c.cfg.Host, c.cfg.Port), bytes.NewBuffer(reqJSON),
 	)
 	if err != nil {
 		return MLResponse{}, err

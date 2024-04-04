@@ -65,7 +65,7 @@
                 var content = document.getElementById("text-input").value;
                 console.log(content);
                 var xhr = new XMLHttpRequest();
-                xhr.open("POST", "http://localhost/api/v1/get/markup", true);
+                xhr.open("POST", "http://212.233.73.82/api/v1/markup", true);
                 xhr.setRequestHeader("Content-Type", "application/json");
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4 && xhr.status === 200) {
@@ -78,8 +78,8 @@
     </form>
 </div>
 <div class="github-logos">
-    <a href="https://github.com/OkDenAl"><img src="static/github.png" alt="GitHub Logo" class="github-logo"></a>
-    <a href="https://github.com/OkDenAl" class="person-link">Denis Okutin</a>
+    <a href="https://github.com/OkDenAl/text-markup"><img src="static/github.png" alt="GitHub Logo" class="github-logo"></a>
+    <a href="https://github.com/OkDenAl/text-markup" class="person-link">DDT</a>
 <!--    <a href="#"><img src="static/github.png" alt="GitHub Logo" class="github-logo"></a>-->
 <!--    <a href="#" class="person-link">Jane Doe</a>-->
 </div>
