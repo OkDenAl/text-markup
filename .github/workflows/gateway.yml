@@ -1,0 +1,33 @@
+name: Gateway Workflow
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  golangci:
+    name: linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.21
+      - uses: actions/checkout@v2
+      - name: run golangci-lint
+        run: |
+          cd ./gateway
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2
+          make lint
+          cd ..
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Login to Docker Registry
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build Docker image
+        run: |
+          sudo docker build -t ${{ secrets.DOCKER_USER }}/server:latest -f ./Dockerfile .
+      - name: Push the image
+        run: |
+          docker push ${{ secrets.DOCKER_USER }}/server --all-tags
