@@ -8,8 +8,8 @@ on:
 
 jobs:
   deploy:
-#    runs-on: ubuntu-latest
-#    steps:
+    runs-on: ubuntu-latest
+    steps:
 #      - name: pull project
 #        uses: appleboy/ssh-action@master
 #        with:
