@@ -2,12 +2,10 @@ package httpl
 
 import (
 	"context"
-	"errors"
+
 	"github.com/OkDenAl/text-markup-gateway/internal/domain"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/model"
 )
-
-var ErrValidationFailed = errors.New("validation failed")
 
 type MLMarkupRepo struct {
 	client iMLClient

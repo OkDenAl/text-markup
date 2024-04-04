@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/OkDenAl/text-markup-gateway/internal/config"
-	"github.com/OkDenAl/text-markup-gateway/internal/handler/model"
-	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
+
+	"github.com/OkDenAl/text-markup-gateway/internal/config"
+	"github.com/OkDenAl/text-markup-gateway/internal/handler/model"
 )
 
 type iMLClient interface {
@@ -26,6 +28,9 @@ func NewClient(cfg config.ClientConfig) MlClient {
 
 func (c MlClient) GetPrediction(reqData model.TextMarkupRequest) (MLResponse, error) {
 	reqJSON, err := json.Marshal(reqData)
+	if err != nil {
+		return MLResponse{}, err
+	}
 
 	req, err := http.NewRequest(
 		"GET", fmt.Sprintf("http://%s:%s/api/v1/prediction", c.cfg.Host, c.cfg.Port), bytes.NewBuffer(reqJSON),
@@ -42,10 +47,12 @@ func (c MlClient) GetPrediction(reqData model.TextMarkupRequest) (MLResponse, er
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return MLResponse{}, err
+	}
 
 	var result MLResponse
-	err = json.Unmarshal([]byte(body), &result)
-	if err != nil {
+	if err = json.Unmarshal(body, &result); err != nil {
 		return MLResponse{}, err
 	}
 

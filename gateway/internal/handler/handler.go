@@ -2,9 +2,11 @@ package handler
 
 import (
 	"context"
-	"github.com/OkDenAl/text-markup-gateway/internal/domain"
+	"errors"
+
 	"github.com/gin-gonic/gin"
-	"github.com/pkg/errors"
+
+	"github.com/OkDenAl/text-markup-gateway/internal/domain"
 )
 
 var ErrValidationFailed = errors.New("validation failed")
