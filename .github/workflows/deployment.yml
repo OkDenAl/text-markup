@@ -30,6 +30,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ./text-markup/gateway/
-            sudo make prod-stop
+            git restore .
             git pull --progress
             sudo make prod-start
