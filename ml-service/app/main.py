@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 import torch
 from pydantic import BaseModel
+import uvicorn
 
 
 class Item(BaseModel):
@@ -15,7 +16,8 @@ model = AutoModelForTokenClassification.from_pretrained("viktoroo/sberbank-ruber
 
 
 def transform_tag(tag):
-    return tag.replace(" ##и", "й").replace(" ##", "").replace(" . ", ".").strip().title()
+    return tag.replace(" ##и", "й").replace(" ##", "").replace(" . ", ".")\
+        .replace(" ( ", "(").replace(" )", ")").replace(" ) ", ")").strip().title()
 
 
 def transform_model_output(token_list, token_labels):
