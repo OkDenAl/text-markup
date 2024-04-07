@@ -2,6 +2,7 @@ env: local
 log_level: debug
 
 http_server:
+  host: localhost
   port: 8000
   read_timeout: 5s
   write_timeout: 5s
