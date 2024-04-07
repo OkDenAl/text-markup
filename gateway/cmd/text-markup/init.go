@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/OkDenAl/text-markup-gateway/internal/handler/middleware"
 	"net/http"
 	"os"
 
@@ -8,14 +9,16 @@ import (
 
 	"github.com/OkDenAl/text-markup-gateway/internal/config"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler"
-	"github.com/OkDenAl/text-markup-gateway/internal/handler/middleware"
 )
 
 func newHTTPServer(cfg config.ServerConfig, h handler.Handler) *http.Server {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.New()
-	api := engine.Group("api/v1", middleware.Logger(), middleware.CORS(), gin.Recovery())
+	engine.Use(middleware.Logger(), gin.Recovery(), middleware.CORS())
+
+	api := engine.Group("api/v1")
 	h.SetRouter(api)
+
 	return &http.Server{
 		Addr:         ":" + cfg.Port,
 		Handler:      engine,
