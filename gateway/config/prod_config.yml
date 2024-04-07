@@ -5,8 +5,9 @@ http_server:
   port: 8000
   read_timeout: 5s
   write_timeout: 5s
+  swagger_enabled: true #TODO: когда выйдем в прод не забыть убрать
 
 ml_client:
   port: 8001
   host: ml
-  timeout: 5ms
+  timeout: 5s

@@ -1,0 +1,55 @@
+basePath: /api/v1
+definitions:
+  domain.TextEntities:
+    properties:
+      class:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  model.TextMarkupRequest:
+    properties:
+      text:
+        type: string
+    type: object
+  responses.HTTPError:
+    properties:
+      error:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact:
+    name: text-markup
+    url: https://github.com/OkDenAl/text-markup
+  description: Text markup - it is the service for getting markup from text.
+  title: Text Markup Service
+  version: "1.0"
+paths:
+  /markup:
+    post:
+      description: get markup from text (string)
+      parameters:
+      - description: Text JSON
+        in: body
+        name: text
+        required: true
+        schema:
+          $ref: '#/definitions/model.TextMarkupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.TextEntities'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.HTTPError'
+      summary: get markup from text (string)
+      tags:
+      - Markup
+swagger: "2.0"

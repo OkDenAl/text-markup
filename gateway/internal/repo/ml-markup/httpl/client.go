@@ -7,8 +7,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/rs/zerolog/log"
-
 	"github.com/OkDenAl/text-markup-gateway/internal/config"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/model"
 )
@@ -41,7 +39,6 @@ func (c MlClient) GetPrediction(reqData model.TextMarkupRequest) (MLResponse, er
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("error")
 		return MLResponse{}, err
 	}
 	defer resp.Body.Close()

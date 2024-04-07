@@ -17,9 +17,10 @@ type (
 	}
 
 	ServerConfig struct {
-		Port         string        `yaml:"port" validate:"required" env:"HTTP_PORT"`
-		ReadTimeout  time.Duration `yaml:"read_timeout" validate:"required"`
-		WriteTimeout time.Duration `yaml:"write_timeout" validate:"required"`
+		Port           string        `yaml:"port" validate:"required" env:"HTTP_PORT"`
+		ReadTimeout    time.Duration `yaml:"read_timeout" validate:"required"`
+		WriteTimeout   time.Duration `yaml:"write_timeout" validate:"required"`
+		SwaggerEnabled *bool         `yaml:"swagger_enabled" validate:"required"`
 	}
 
 	ClientConfig struct {
