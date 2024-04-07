@@ -15,7 +15,7 @@ model = AutoModelForTokenClassification.from_pretrained("viktoroo/sberbank-ruber
 
 
 def transform_tag(tag):
-    return tag.replace(" ##", "").replace(" . ", ".").replace("и ", "й ").strip().title()
+    return tag.replace(" ##и", "й").replace(" ##", "").replace(" . ", ".").strip().title()
 
 
 def transform_model_output(token_list, token_labels):
