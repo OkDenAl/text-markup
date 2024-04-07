@@ -20,7 +20,6 @@ import (
 // @contact.name   text-markup
 // @contact.url    https://github.com/OkDenAl/text-markup
 
-// @host      localhost:8000
 // @BasePath  /api/v1
 func main() {
 	defer func() {
