@@ -8,11 +8,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
+
+	"github.com/OkDenAl/text-markup-gateway/pkg/logger"
 )
 
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log := logger.New()
 		var reqBody []byte
 		c.Request.Body, reqBody = readBody(c.Request.Body, c.Request.Header)
 

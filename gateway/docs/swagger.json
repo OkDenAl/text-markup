@@ -1,0 +1,85 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Text markup - it is the service for getting markup from text.",
+        "title": "Text Markup Service",
+        "contact": {
+            "name": "text-markup",
+            "url": "https://github.com/OkDenAl/text-markup"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/api/v1",
+    "paths": {
+        "/markup": {
+            "post": {
+                "description": "get markup from text (string)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Markup"
+                ],
+                "summary": "get markup from text (string)",
+                "parameters": [
+                    {
+                        "description": "Text JSON",
+                        "name": "text",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.TextMarkupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.TextEntities"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.HTTPError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.TextEntities": {
+            "type": "object",
+            "properties": {
+                "class": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "model.TextMarkupRequest": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "responses.HTTPError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

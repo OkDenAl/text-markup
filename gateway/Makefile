@@ -14,6 +14,10 @@ cover:
 lint:
 	golangci-lint run ./...
 
+swag:
+	swag init -g ./cmd/text-markup/main.go
+
+
 prod-stop:
 	@mv ./docker-compose.yml ./docker-compose-dev.yml
 	@cp ./prod/docker-compose.yml ./docker-compose.yml
