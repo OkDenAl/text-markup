@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ml_contract;
+
+message PredictionsRequest {
+    string text = 1;
+}
+
+message PredictionResponce {
+    repeated string token_list = 1;
+    repeated string token_labels = 2;
+}
+
+service MLService {
+    rpc GetPredictions (PredictionsRequest) returns (PredictionResponce) {}
+}
