@@ -2,7 +2,7 @@ env: prod
 log_level: info
 
 http_server:
-  host: 212.233.73.82
+  host: cluster-text.ru
   port: 8000
   read_timeout: 5s
   write_timeout: 5s

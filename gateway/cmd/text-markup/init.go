@@ -42,7 +42,7 @@ func initAndStartHTTPServer(cfg config.ServerConfig, h handler.Handler) <-chan e
 	engine := gin.New()
 	if cfg.SwaggerEnabled != nil && *cfg.SwaggerEnabled {
 		engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", "bebra", cfg.Port)
+		docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
 	}
 
 	api := engine.Group("api/v1")
