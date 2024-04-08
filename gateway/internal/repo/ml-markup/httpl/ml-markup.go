@@ -15,14 +15,15 @@ func NewMLMarkupRepo(client iMLClient) (MLMarkupRepo, error) {
 	return MLMarkupRepo{client: client}, nil
 }
 
-func (r MLMarkupRepo) GetEntitiesFromText(ctx context.Context, text string) (domain.TextEntities, error) {
-	resp, err := r.client.GetPrediction(model.NewTextMarkupRequest(text))
+func (r MLMarkupRepo) GetEntitiesFromText(ctx context.Context, text string) (te domain.TextEntities, err error) {
+	var resp MLResponse
+	resp, err = r.client.GetPrediction(ctx, model.NewTextMarkupRequest(text))
 	if err != nil {
 		return domain.TextEntities{}, err
 	}
-	var te domain.TextEntities
 	for i, label := range resp.Labels {
 		if label != "O" {
+			te.Labels = append(te.Labels, resp.Labels[i])
 			te.Tags = append(te.Tags, resp.Tokens[i])
 		}
 	}

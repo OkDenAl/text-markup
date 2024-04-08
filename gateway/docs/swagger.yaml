@@ -2,8 +2,10 @@ basePath: /api/v1
 definitions:
   domain.TextEntities:
     properties:
-      class:
-        type: string
+      labels:
+        items:
+          type: string
+        type: array
       tags:
         items:
           type: string

@@ -2,6 +2,7 @@ package httpl
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,7 +13,7 @@ import (
 )
 
 type iMLClient interface {
-	GetPrediction(request model.TextMarkupRequest) (MLResponse, error)
+	GetPrediction(ctx context.Context, request model.TextMarkupRequest) (MLResponse, error)
 }
 
 type MlClient struct {
@@ -24,7 +25,7 @@ func NewClient(cfg config.ClientConfig) MlClient {
 	return MlClient{client: http.Client{}, cfg: cfg}
 }
 
-func (c MlClient) GetPrediction(reqData model.TextMarkupRequest) (MLResponse, error) {
+func (c MlClient) GetPrediction(_ context.Context, reqData model.TextMarkupRequest) (MLResponse, error) {
 	reqJSON, err := json.Marshal(reqData)
 	if err != nil {
 		return MLResponse{}, err
