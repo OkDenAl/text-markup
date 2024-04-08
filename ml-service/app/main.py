@@ -46,7 +46,7 @@ def transform_model_output(token_list, token_labels):
 
     return tags, tag_labels
 
-@app.get("api/v1/prediction")
+@app.get("/api/v1/prediction")
 async def get_prediction(item: Item):
     try:
         text = item.text
