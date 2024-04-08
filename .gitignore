@@ -23,6 +23,3 @@ go.work
 .idea
 mocks
 *.log
-gateway/.env
-gateway/config/nginx/cert.pem
-gateway/config/nginx/key.pem
