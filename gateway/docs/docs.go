@@ -61,8 +61,11 @@ const docTemplate = `{
         "domain.TextEntities": {
             "type": "object",
             "properties": {
-                "class": {
-                    "type": "string"
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "tags": {
                     "type": "array",

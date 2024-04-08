@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/OkDenAl/text-markup-gateway/docs"
 	"net/http"
 	"os"
 
@@ -12,6 +11,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
+	"github.com/OkDenAl/text-markup-gateway/docs"
 	"github.com/OkDenAl/text-markup-gateway/internal/config"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/middleware"
