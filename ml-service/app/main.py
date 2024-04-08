@@ -13,6 +13,7 @@ app = FastAPI()
 tokenizer = AutoTokenizer.from_pretrained("viktoroo/sberbank-rubert-base-collection3")
 model = AutoModelForTokenClassification.from_pretrained("viktoroo/sberbank-rubert-base-collection3")
 
+
 @app.get("/api/v1/prediction")
 async def get_prediction(item: Item):
     try:

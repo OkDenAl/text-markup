@@ -2,15 +2,22 @@ syntax = "proto3";
 
 package ml_contract;
 
-message PredictionsRequest {
+import "google/api/annotations.proto";
+
+message PredictionRequest {
     string text = 1;
 }
 
-message PredictionResponce {
+message PredictionResponse {
     repeated string token_list = 1;
     repeated string token_labels = 2;
 }
 
 service MLService {
-    rpc GetPredictions (PredictionsRequest) returns (PredictionResponce) {}
+    rpc GetPredictions (PredictionRequest) returns (PredictionResponse) {
+        option (google.api.http) = {
+          get: "/api/v1/prediction"
+          body: "*"
+        };
+    }
 }
