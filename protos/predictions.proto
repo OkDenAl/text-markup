@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ml_contract;
 
-import "protos/google/api/annotations.proto";
+import "google/api/annotations.proto";
 
 message PredictionRequest {
     string text = 1;

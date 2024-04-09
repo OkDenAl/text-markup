@@ -34,7 +34,7 @@ class MLService(pb2_grpc.MLServiceServicer):
 
             print(token_list, token_labels)
 
-            return pb2.PredictionResponce(token_list, token_labels)
+            return pb2.PredictionResponse(token_list, token_labels)
         except Exception as e:
             print(e)
 

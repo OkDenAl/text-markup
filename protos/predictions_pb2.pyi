@@ -1,3 +1,4 @@
+from google.api import annotations_pb2 as _annotations_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
@@ -5,13 +6,13 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Optional as _Op
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
-class PredictionsRequest(_message.Message):
+class PredictionRequest(_message.Message):
     __slots__ = ("text",)
     TEXT_FIELD_NUMBER: _ClassVar[int]
     text: str
     def __init__(self, text: _Optional[str] = ...) -> None: ...
 
-class PredictionResponce(_message.Message):
+class PredictionResponse(_message.Message):
     __slots__ = ("token_list", "token_labels")
     TOKEN_LIST_FIELD_NUMBER: _ClassVar[int]
     TOKEN_LABELS_FIELD_NUMBER: _ClassVar[int]

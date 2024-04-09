@@ -2,8 +2,6 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from pydantic import BaseModel
-
 import predictions_pb2 as predictions__pb2
 
 
@@ -18,8 +16,8 @@ class MLServiceStub(object):
         """
         self.GetPredictions = channel.unary_unary(
                 '/ml_contract.MLService/GetPredictions',
-                request_serializer=predictions__pb2.PredictionsRequest.SerializeToString,
-                response_deserializer=predictions__pb2.PredictionResponce.FromString,
+                request_serializer=predictions__pb2.PredictionRequest.SerializeToString,
+                response_deserializer=predictions__pb2.PredictionResponse.FromString,
                 )
 
 
@@ -37,8 +35,8 @@ def add_MLServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetPredictions': grpc.unary_unary_rpc_method_handler(
                     servicer.GetPredictions,
-                    request_deserializer=predictions__pb2.PredictionsRequest.FromString,
-                    response_serializer=predictions__pb2.PredictionResponce.SerializeToString,
+                    request_deserializer=predictions__pb2.PredictionRequest.FromString,
+                    response_serializer=predictions__pb2.PredictionResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,7 +60,7 @@ class MLService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ml_contract.MLService/GetPredictions',
-            predictions__pb2.PredictionsRequest.SerializeToString,
-            predictions__pb2.PredictionResponce.FromString,
+            predictions__pb2.PredictionRequest.SerializeToString,
+            predictions__pb2.PredictionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

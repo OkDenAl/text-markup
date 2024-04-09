@@ -12,19 +12,22 @@ from google.protobuf.internal import builder as _builder
 _sym_db = _symbol_database.Default()
 
 
+from google.api import annotations_pb2 as google_dot_api_dot_annotations__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11predictions.proto\x12\x0bml_contract\"\"\n\x12PredictionsRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\">\n\x12PredictionResponce\x12\x12\n\ntoken_list\x18\x01 \x03(\t\x12\x14\n\x0ctoken_labels\x18\x02 \x03(\t2a\n\tMLService\x12T\n\x0eGetPredictions\x12\x1f.ml_contract.PredictionsRequest\x1a\x1f.ml_contract.PredictionResponce\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11predictions.proto\x12\x0bml_contract\x1a\x1cgoogle/api/annotations.proto\"!\n\x11PredictionRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\">\n\x12PredictionResponse\x12\x12\n\ntoken_list\x18\x01 \x03(\t\x12\x14\n\x0ctoken_labels\x18\x02 \x03(\t2}\n\tMLService\x12p\n\x0eGetPredictions\x12\x1e.ml_contract.PredictionRequest\x1a\x1f.ml_contract.PredictionResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x12/api/v1/prediction:\x01*b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'predictions_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
-  _globals['_PREDICTIONSREQUEST']._serialized_start=34
-  _globals['_PREDICTIONSREQUEST']._serialized_end=68
-  _globals['_PREDICTIONRESPONCE']._serialized_start=70
-  _globals['_PREDICTIONRESPONCE']._serialized_end=132
-  _globals['_MLSERVICE']._serialized_start=134
-  _globals['_MLSERVICE']._serialized_end=231
+  _globals['_MLSERVICE'].methods_by_name['GetPredictions']._options = None
+  _globals['_MLSERVICE'].methods_by_name['GetPredictions']._serialized_options = b'\202\323\344\223\002\027\022\022/api/v1/prediction:\001*'
+  _globals['_PREDICTIONREQUEST']._serialized_start=64
+  _globals['_PREDICTIONREQUEST']._serialized_end=97
+  _globals['_PREDICTIONRESPONSE']._serialized_start=99
+  _globals['_PREDICTIONRESPONSE']._serialized_end=161
+  _globals['_MLSERVICE']._serialized_start=163
+  _globals['_MLSERVICE']._serialized_end=288
 # @@protoc_insertion_point(module_scope)
