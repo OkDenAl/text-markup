@@ -2,6 +2,8 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
+from pydantic import BaseModel
+
 import predictions_pb2 as predictions__pb2
 
 
