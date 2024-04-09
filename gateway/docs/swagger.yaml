@@ -31,7 +31,7 @@ info:
 paths:
   /markup:
     post:
-      description: get markup from text (string)
+      description: get markup from text
       parameters:
       - description: Text JSON
         in: body
@@ -50,7 +50,36 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/responses.HTTPError'
-      summary: get markup from text (string)
+      summary: get markup from text
+      tags:
+      - Markup
+  /markup-file:
+    post:
+      consumes:
+      - multipart/form-data
+      description: get markup from file
+      parameters:
+      - description: File to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.TextEntities'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.HTTPError'
+      summary: get markup from file
       tags:
       - Markup
 swagger: "2.0"
