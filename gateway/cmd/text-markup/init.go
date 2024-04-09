@@ -37,12 +37,22 @@ func setupLogger(cfg *config.Config) {
 	logger.SetupWriter()
 }
 
-func initAndStartHTTPServer(cfg config.ServerConfig, h handler.Handler) <-chan error {
+func initAndStartHTTPServer(env string, cfg config.ServerConfig, h handler.Handler) <-chan error {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.New()
 	if cfg.SwaggerEnabled != nil && *cfg.SwaggerEnabled {
 		engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
+
+		const (
+			prod            = "prod"
+			defaultProdPort = "443"
+		)
+
+		if env == prod {
+			docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.Host, defaultProdPort)
+		} else {
+			docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
+		}
 	}
 
 	api := engine.Group("api/v1")

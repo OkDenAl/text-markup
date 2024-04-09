@@ -49,7 +49,7 @@ func main() {
 		log.Panic().Stack().Err(err).Msg("failed to setup handler")
 	}
 
-	errCh := initAndStartHTTPServer(cfg.HTTP, h)
+	errCh := initAndStartHTTPServer(cfg.Env, cfg.HTTP, h)
 	printLocalURLS(cfg.HTTP.Port)
 
 	gracefulShutdown(errCh)
