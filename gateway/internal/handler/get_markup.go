@@ -8,6 +8,7 @@ import (
 
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/model"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/responses"
+  	"github.com/OkDenAl/text-markup-gateway/internal/repo/ml-markup/httpl"
 )
 
 // @BasePath /api/v1
@@ -20,6 +21,7 @@ import (
 // @Produce json
 // @Param   text body model.TextMarkupRequest  true  "Text JSON"
 // @Success 200 {object} domain.TextEntities
+// @Success 204 {object} responses.HTTPError
 // @Failure 500 {object} responses.HTTPError
 // @Router /markup [post]
 func getMarkup(markup iMLMarkup) gin.HandlerFunc {
@@ -33,8 +35,14 @@ func getMarkup(markup iMLMarkup) gin.HandlerFunc {
 
 		entities, err := markup.GetEntitiesFromText(c, req.Text)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.Error(err))
-			_ = c.AbortWithError(http.StatusInternalServerError, err)
+			switch {
+			case errors.Is(err, httpl.ErrInvalidData):
+				c.JSON(http.StatusNoContent, responses.Error(err))
+				_ = c.AbortWithError(http.StatusNoContent, err)
+			default:
+				c.JSON(http.StatusInternalServerError, responses.Error(err))
+				_ = c.AbortWithError(http.StatusInternalServerError, err)
+			}
 			return
 		}
 

@@ -22,6 +22,7 @@ import (
 // @Param file formData file true "File to upload"
 // @Success 200 {object} domain.TextEntities
 // @Failure 400 {object} responses.HTTPError
+// @Success 204 {object} responses.HTTPError
 // @Failure 500 {object} responses.HTTPError
 // @Router /markup-file [post]
 func getMarkupFromFile(markup iMLMarkup) gin.HandlerFunc {
@@ -36,6 +37,9 @@ func getMarkupFromFile(markup iMLMarkup) gin.HandlerFunc {
 		entities, err := markup.GetEntitiesFromFile(c, fileHeader)
 		if err != nil {
 			switch {
+			case errors.Is(err, httpl.ErrInvalidData):
+				c.JSON(http.StatusNoContent, responses.Error(err))
+				_ = c.AbortWithError(http.StatusNoContent, err)
 			case errors.Is(err, httpl.ErrInvalidFileExtension):
 				c.JSON(http.StatusBadRequest, responses.Error(err))
 				_ = c.AbortWithError(http.StatusBadRequest, err)

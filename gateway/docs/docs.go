@@ -47,6 +47,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/domain.TextEntities"
                         }
                     },
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/responses.HTTPError"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -83,6 +89,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/domain.TextEntities"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/responses.HTTPError"
                         }
                     },
                     "400": {
