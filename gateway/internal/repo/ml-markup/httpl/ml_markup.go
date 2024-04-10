@@ -43,7 +43,6 @@ func (r MLMarkupRepo) GetEntitiesFromText(ctx context.Context, text string) (dom
 	if len(te.Tags) == 0 && len(te.Labels) == 0 {
 		return domain.TextEntities{}, errors.Wrap(ErrInvalidData, "failed to get entities from text")
 	}
-
 	return te, nil
 }
 
