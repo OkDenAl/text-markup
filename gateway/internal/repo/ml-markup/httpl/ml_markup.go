@@ -13,7 +13,10 @@ import (
 	"github.com/OkDenAl/text-markup-gateway/pkg/logger"
 )
 
-var ErrInvalidFileExtension = errors.New("invalid file extension")
+var (
+	ErrInvalidFileExtension = errors.New("invalid file extension")
+	ErrInvalidData          = errors.New("invalid data")
+)
 
 type MLMarkupRepo struct {
 	client iMLClient
@@ -35,6 +38,10 @@ func (r MLMarkupRepo) GetEntitiesFromText(ctx context.Context, text string) (dom
 			te.Labels = append(te.Labels, resp.Labels[i])
 			te.Tags = append(te.Tags, resp.Tokens[i])
 		}
+	}
+
+	if len(te.Tags) == 0 && len(te.Labels) == 0 {
+		return domain.TextEntities{}, errors.Wrap(ErrInvalidData, "failed to get entities from text")
 	}
 
 	return te, nil
@@ -72,6 +79,10 @@ func (r MLMarkupRepo) GetEntitiesFromFile(
 			te.Labels = append(te.Labels, resp.Labels[i])
 			te.Tags = append(te.Tags, resp.Tokens[i])
 		}
+	}
+
+	if len(te.Tags) == 0 && len(te.Labels) == 0 {
+		return domain.TextEntities{}, errors.Wrap(ErrInvalidData, "failed to get entities from text")
 	}
 
 	return te, nil
