@@ -22,6 +22,7 @@ import (
 // @Param file formData file true "File to upload"
 // @Success 200 {object} domain.TextEntities
 // @Failure 400 {object} responses.HTTPError
+// @Success 204 {object} responses.HTTPError
 // @Failure 500 {object} responses.HTTPError
 // @Router /markup-file [post]
 func getMarkupFromFile(markup iMLMarkup) gin.HandlerFunc {
