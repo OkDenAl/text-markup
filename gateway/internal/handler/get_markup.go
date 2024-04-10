@@ -8,7 +8,7 @@ import (
 
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/model"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/responses"
-  "github.com/OkDenAl/text-markup-gateway/internal/repo/ml-markup/httpl"
+  	"github.com/OkDenAl/text-markup-gateway/internal/repo/ml-markup/httpl"
 )
 
 // @BasePath /api/v1
