@@ -2,7 +2,7 @@ env: prod
 log_level: info
 
 http_server:
-  host: 212.233.73.82
+  host: cluster-text.ru
   port: 8000
   read_timeout: 5s
   write_timeout: 5s
@@ -12,3 +12,8 @@ ml_client:
   port: 8001
   host: ml
   timeout: 5s
+  circuit_breaker:
+    half_open_max_successes: 10
+    min_threshold: 10
+    failure_rate: 0.4
+    counter_reset_interval: 10s

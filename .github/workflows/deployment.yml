@@ -10,18 +10,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-#      - name: pull project
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.USERNAME }}
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
-#          script: |
-#            sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-#            cd ./text-markup/gateway/
-#            sudo docker rmi $(sudo docker images -a | grep ${{ secrets.DOCKER_USERNAME }} | awk '{print $3}')
-#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/server
-#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ml
       - name: run project
         uses: appleboy/ssh-action@master
         with:
@@ -30,6 +18,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ./text-markup/gateway/
-            sudo make prod-stop
+            git restore .
             git pull --progress
             sudo make prod-start

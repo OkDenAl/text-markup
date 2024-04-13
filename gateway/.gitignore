@@ -25,4 +25,6 @@ idea
 mocks
 *.log
 .env
-Ubuntu-STD3-2-4-30GB-ddt-Bw9iZmi3.pem
+*.pem
+*.key
+*.crt
