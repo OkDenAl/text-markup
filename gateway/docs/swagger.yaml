@@ -2,6 +2,8 @@ basePath: /api/v1
 definitions:
   domain.TextEntities:
     properties:
+      class:
+        type: string
       labels:
         items:
           type: string
@@ -48,8 +50,6 @@ paths:
             $ref: '#/definitions/domain.TextEntities'
         "204":
           description: No Content
-          schema:
-            $ref: '#/definitions/responses.HTTPError'
         "500":
           description: Internal Server Error
           schema:
