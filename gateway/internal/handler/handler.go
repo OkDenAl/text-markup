@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"mime/multipart"
 
 	"github.com/gin-gonic/gin"
 
@@ -14,6 +15,7 @@ var ErrValidationFailed = errors.New("validation failed")
 //go:generate minimock -g -s .go -i iUsecase -o ../../mocks/handler
 type iMLMarkup interface {
 	GetEntitiesFromText(ctx context.Context, text string) (domain.TextEntities, error)
+	GetEntitiesFromFile(ctx context.Context, file *multipart.FileHeader) (domain.TextEntities, error)
 }
 
 type Handler struct {
@@ -30,4 +32,5 @@ func New(mlMarkup iMLMarkup) (Handler, error) {
 
 func (h Handler) SetRouter(api *gin.RouterGroup) {
 	api.POST("/markup", getMarkup(h.mlMarkup))
+	api.POST("/markup-file", getMarkupFromFile(h.mlMarkup))
 }

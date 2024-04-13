@@ -21,14 +21,14 @@ const docTemplate = `{
     "paths": {
         "/markup": {
             "post": {
-                "description": "get markup from text (string)",
+                "description": "get markup from text",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Markup"
                 ],
-                "summary": "get markup from text (string)",
+                "summary": "get markup from text",
                 "parameters": [
                     {
                         "description": "Text JSON",
@@ -47,6 +47,62 @@ const docTemplate = `{
                             "$ref": "#/definitions/domain.TextEntities"
                         }
                     },
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/responses.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/markup-file": {
+            "post": {
+                "description": "get markup from file",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Markup"
+                ],
+                "summary": "get markup from file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File to upload",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.TextEntities"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/responses.HTTPError"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.HTTPError"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -61,8 +117,11 @@ const docTemplate = `{
         "domain.TextEntities": {
             "type": "object",
             "properties": {
-                "class": {
-                    "type": "string"
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "tags": {
                     "type": "array",
