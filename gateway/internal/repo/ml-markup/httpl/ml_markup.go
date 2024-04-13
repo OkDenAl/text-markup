@@ -43,6 +43,9 @@ func (r MLMarkupRepo) GetEntitiesFromText(ctx context.Context, text string) (dom
 	if len(te.Tags) == 0 && len(te.Labels) == 0 {
 		return domain.TextEntities{}, errors.Wrap(ErrInvalidData, "failed to get entities from text")
 	}
+
+	te.Class = "mock"
+
 	return te, nil
 }
 
@@ -84,11 +87,13 @@ func (r MLMarkupRepo) GetEntitiesFromFile(
 		return domain.TextEntities{}, errors.Wrap(ErrInvalidData, "failed to get entities from text")
 	}
 
+	te.Class = "mock"
+
 	return te, nil
 }
 
 func checkFileExtension(data []byte) error {
-	var allowed = []string{"text/plain", "application/pdf"}
+	var allowed = []string{"text/plain"}
 
 	mtype := mimetype.Detect(data)
 	if !mimetype.EqualsAny(mtype.String(), allowed...) {
