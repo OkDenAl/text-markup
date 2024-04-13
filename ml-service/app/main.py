@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 import torch
 from pydantic import BaseModel
+from own_lsg_converter import MYLSGConverter
 import uvicorn
 
 
@@ -11,12 +12,15 @@ class Item(BaseModel):
 
 app = FastAPI()
 
-tokenizer = AutoTokenizer.from_pretrained("viktoroo/sberbank-rubert-base-collection3")
-model = AutoModelForTokenClassification.from_pretrained("viktoroo/sberbank-rubert-base-collection3")
+converter = MYLSGConverter(max_sequence_length=4096)
+model, tokenizer = converter.convert_from_pretrained(
+    'KodKio/ruBert-base-finetuned-ner',
+    architecture="BertForTokenClassification"
+)
 
 
 def transform_tag(tag):
-    return tag.replace(" ##и", "й").replace(" ##", "").replace(" . ", ".")\
+    return tag.replace(" ##ии", "ии").replace(" ##и", "й").replace(" ##", "").replace(" . ", ".") \
         .replace(" ( ", "(").replace(" )", ")").replace(" ) ", ")").strip().title()
 
 
@@ -26,23 +30,26 @@ def transform_model_output(token_list, token_labels):
     tags = []
     tag_labels = []
 
-    for token, label in zip(token_list, token_labels):
-        if label == "O":
+
+    for i in range(1, len(token_list)):
+        if token_labels[i] == "O":
             if tag != "":
                 tags.append(transform_tag(tag))
                 tag_labels.append(tag_label)
                 tag = ""
-                tag_label = ""
+            tag_label = "O"
             continue
-        if label.startswith("B"):
-            if tag != "":
+        if token_labels[i].startswith("B"):
+            if tag != "" and token_labels[i][2:] != tag_label:
                 tags.append(transform_tag(tag))
                 tag_labels.append(tag_label)
-                tag = ""
-            tag += (" " + token)
-            tag_label = label[-3:]
-        if label.startswith("I"):
-            tag += (" " + token)
+                tag = token_list[i]
+                tag_label = token_labels[i][2:]
+                continue
+            tag += (" " + token_list[i])
+            tag_label = token_labels[i][2:]
+        if token_labels[i].startswith("I"):
+            tag += (" " + token_list[i])
 
     return tags, tag_labels
 
