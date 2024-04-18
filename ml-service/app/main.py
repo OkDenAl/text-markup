@@ -87,6 +87,6 @@ async def get_class(item: Item):
         text = item.text
         embedding = classificator.get_embeddings([text])
         class_label = classificator.predict(embedding)
-        return {"class_label": classes[class_label]}
+        return {"class": classes[class_label]}
     except Exception as e:
         print(e)

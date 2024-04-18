@@ -5,3 +5,4 @@ torch
 transformers
 lsg_converter
 joblib
+scikit-learn
