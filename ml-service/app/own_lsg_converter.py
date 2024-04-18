@@ -1,8 +1,4 @@
 from transformers import AutoTokenizer
-import json
-import warnings
-import torch
-import sys
 
 label2id = {
     'O': 0,

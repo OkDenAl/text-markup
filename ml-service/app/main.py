@@ -1,10 +1,8 @@
 from fastapi import FastAPI
-from transformers import AutoTokenizer, AutoModelForTokenClassification
 import torch
 from pydantic import BaseModel
 from own_lsg_converter import MYLSGConverter
 from class_predictor import Classificator
-import uvicorn
 
 
 class Item(BaseModel):
