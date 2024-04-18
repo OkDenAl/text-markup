@@ -1,12 +1,7 @@
-import pandas as pd
-import numpy as np
-import random
 import torch
-import transformers
-import torch.nn as nn
 import joblib
 
-from transformers import AutoModel, AutoTokenizer, BertTokenizer, BertForSequenceClassification
+from transformers import AutoModel, AutoTokenizer
 
 device = torch.device('cpu')
 
