@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"github.com/OkDenAl/text-markup-gateway/internal/domain"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/model"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/responses"
@@ -27,14 +29,30 @@ import (
 func getMarkup(markup iMLMarkup) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		req := model.TextMarkupRequest{}
-		if err := c.BindJSON(&req); err != nil {
+		err := c.BindJSON(&req)
+		if err != nil {
 			c.JSON(http.StatusBadRequest, responses.Error(errors.Wrap(err, "failed to get request data")))
 			_ = c.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 
-		entities, err := markup.GetEntitiesFromText(c, req.Text)
-		if err != nil {
+		var (
+			eg     errgroup.Group
+			tokens domain.Tokens
+			class  domain.Class
+		)
+
+		eg.Go(func() error {
+			tokens, err = markup.GetTokensFromText(c, req.Text)
+			return err
+		})
+
+		eg.Go(func() error {
+			class, err = markup.GetClassFromText(c, req.Text)
+			return err
+		})
+
+		if err = eg.Wait(); err != nil {
 			switch {
 			case errors.Is(err, httpl.ErrInvalidData):
 				c.JSON(http.StatusNoContent, responses.Error(err))
@@ -46,6 +64,6 @@ func getMarkup(markup iMLMarkup) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, entities)
+		c.JSON(http.StatusOK, domain.NewTextEntities(class.Class, tokens.Labels, tokens.Tags))
 	}
 }

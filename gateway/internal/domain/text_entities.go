@@ -6,6 +6,6 @@ type TextEntities struct {
 	Tags   []string `json:"tags"`
 }
 
-func NewTextEntities(labels []string, tags []string) TextEntities {
-	return TextEntities{Labels: labels, Tags: tags}
+func NewTextEntities(class string, labels []string, tags []string) TextEntities {
+	return TextEntities{Labels: labels, Tags: tags, Class: class}
 }
