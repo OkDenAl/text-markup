@@ -3,6 +3,7 @@ from transformers import AutoTokenizer, AutoModelForTokenClassification
 import torch
 from pydantic import BaseModel
 from own_lsg_converter import MYLSGConverter
+from class_predictor import Classificator
 import uvicorn
 
 
@@ -18,6 +19,8 @@ model, tokenizer = converter.convert_from_pretrained(
     architecture="BertForTokenClassification"
 )
 
+classificator = Classificator()
+
 
 def transform_tag(tag):
     return tag.replace(" ##ии", "ии").replace(" ##и", "й").replace(" ##", "").replace(" . ", ".") \
@@ -29,7 +32,6 @@ def transform_model_output(token_list, token_labels):
     tag_label = ""
     tags = []
     tag_labels = []
-
 
     for i in range(1, len(token_list)):
         if token_labels[i] == "O":
@@ -53,7 +55,8 @@ def transform_model_output(token_list, token_labels):
 
     return tags, tag_labels
 
-@app.get("/api/v1/prediction")
+
+@app.get("/api/v1/tokens")
 async def get_prediction(item: Item):
     try:
         text = item.text
@@ -73,5 +76,19 @@ async def get_prediction(item: Item):
         print(token_list, token_labels)
 
         return {"tokens": token_list, "labels": token_labels}
+    except Exception as e:
+        print(e)
+
+
+
+
+@app.get("/api/v1/class")
+async def get_class(item: Item):
+    classes = ["Home", "Health", "Celebrities", "Films and Shows", "Incidents", "Researches"]
+    try:
+        text = item.text
+        embedding = classificator.get_embeddings([text])
+        class_label = classificator.predict(embedding)
+        return {"class_label": classes[class_label]}
     except Exception as e:
         print(e)
