@@ -14,11 +14,13 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/OkDenAl/text-markup-gateway/internal/config"
+	"github.com/OkDenAl/text-markup-gateway/internal/domain"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/model"
 )
 
 type iMLClient interface {
-	GetPrediction(ctx context.Context, request model.TextMarkupRequest) (MLResponse, error)
+	GetTokens(ctx context.Context, request model.TextMarkupRequest) (domain.Tokens, error)
+	GetClass(ctx context.Context, request model.TextMarkupRequest) (domain.Class, error)
 }
 
 type MlClient struct {
@@ -43,43 +45,82 @@ func NewClient(cfg config.ClientConfig) MlClient {
 	return MlClient{client: http.Client{}, cfg: cfg, cb: cb}
 }
 
-func (c MlClient) GetPrediction(ctx context.Context, reqData model.TextMarkupRequest) (resp MLResponse, err error) {
+func (c MlClient) GetTokens(ctx context.Context, reqData model.TextMarkupRequest) (tokens domain.Tokens, err error) {
 	if !c.cb.Ready() {
-		return MLResponse{}, circuitbreaker.ErrOpen
+		return domain.Tokens{}, circuitbreaker.ErrOpen
 	}
 	defer func() { err = c.cb.Done(ctx, err) }()
 
 	var reqJSON []byte
 	reqJSON, err = json.Marshal(reqData)
 	if err != nil {
-		return MLResponse{}, errors.Wrap(err, "failed to marshal req data")
+		return domain.Tokens{}, errors.Wrap(err, "failed to marshal req data")
 	}
 
 	var req *http.Request
 	req, err = http.NewRequest(
-		"GET", fmt.Sprintf("http://%s:%s/api/v1/prediction", c.cfg.Host, c.cfg.Port), bytes.NewBuffer(reqJSON),
+		"GET", fmt.Sprintf("http://%s:%s/api/v1/tokens", c.cfg.Host, c.cfg.Port), bytes.NewBuffer(reqJSON),
 	)
 	if err != nil {
-		return MLResponse{}, errors.Wrapf(err, "failed to create http request to %s", req.URL.String())
+		return domain.Tokens{}, errors.Wrapf(err, "failed to create http request to %s", req.URL.String())
 	}
 
 	var clientResp *http.Response
 	clientResp, err = c.client.Do(req)
 	if err != nil {
-		return MLResponse{}, errors.Wrapf(err, "failed to send http request to %s", req.URL.String())
+		return domain.Tokens{}, errors.Wrapf(err, "failed to send http request to %s", req.URL.String())
 	}
 	defer clientResp.Body.Close()
 
 	var body []byte
 	body, err = io.ReadAll(clientResp.Body)
 	if err != nil {
-		return MLResponse{}, errors.Wrap(err, "failed to read response body")
+		return domain.Tokens{}, errors.Wrap(err, "failed to read response body")
 	}
 
-	var result MLResponse
-	if err = json.Unmarshal(body, &result); err != nil {
-		return MLResponse{}, errors.Wrap(err, "failed unmarshal response data")
+	if err = json.Unmarshal(body, &tokens); err != nil {
+		return domain.Tokens{}, errors.Wrap(err, "failed unmarshal response data")
 	}
 
-	return result, nil
+	return tokens, nil
+}
+
+func (c MlClient) GetClass(ctx context.Context, reqData model.TextMarkupRequest) (class domain.Class, err error) {
+	if !c.cb.Ready() {
+		return domain.Class{}, circuitbreaker.ErrOpen
+	}
+	defer func() { err = c.cb.Done(ctx, err) }()
+
+	var reqJSON []byte
+	reqJSON, err = json.Marshal(reqData)
+	if err != nil {
+		return domain.Class{}, errors.Wrap(err, "failed to marshal req data")
+	}
+
+	var req *http.Request
+	req, err = http.NewRequest(
+		"GET", fmt.Sprintf("http://%s:%s/api/v1/class", c.cfg.Host, c.cfg.Port), bytes.NewBuffer(reqJSON),
+	)
+	if err != nil {
+		return domain.Class{}, errors.Wrapf(err, "failed to create http request to %s", req.URL.String())
+	}
+
+	var clientResp *http.Response
+	clientResp, err = c.client.Do(req)
+	if err != nil {
+		return domain.Class{}, errors.Wrapf(err, "failed to send http request to %s", req.URL.String())
+	}
+	defer clientResp.Body.Close()
+
+	var body []byte
+	body, err = io.ReadAll(clientResp.Body)
+	if err != nil {
+		return domain.Class{}, errors.Wrap(err, "failed to read response body")
+	}
+
+	if err = json.Unmarshal(body, &class); err != nil {
+		return domain.Class{}, errors.Wrap(err, "failed unmarshal response data")
+	}
+
+	return class, nil
 }

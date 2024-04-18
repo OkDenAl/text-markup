@@ -57,7 +57,7 @@ def transform_model_output(token_list, token_labels):
 
 
 @app.get("/api/v1/tokens")
-async def get_prediction(item: Item):
+async def get_tokens(item: Item):
     try:
         text = item.text
         inputs = tokenizer(text, return_tensors="pt")
@@ -75,7 +75,7 @@ async def get_prediction(item: Item):
 
         print(token_list, token_labels)
 
-        return {"tokens": token_list, "labels": token_labels}
+        return {"tags": token_list, "labels": token_labels}
     except Exception as e:
         print(e)
 
