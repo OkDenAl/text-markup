@@ -12,7 +12,7 @@ class Classificator:
         self.tokenizer = AutoTokenizer.from_pretrained('DeepPavlov/rubert-base-cased-sentence')
         self.bert.to(device)
 
-        self.kmeans = joblib.load('model_data/kmeans_model.pkl')
+        self.kmeans = joblib.load('model_data/kmeans_model2.pkl')
 
     def get_embeddings(self, text_list):
         encoded_input = self.tokenizer(
