@@ -1,11 +1,19 @@
 from fastapi import FastAPI
-from transformers import AutoTokenizer, AutoModelForTokenClassification
 import torch
 from pydantic import BaseModel
 from own_lsg_converter import MYLSGConverter
 import uvicorn
-from pymorphy2 import MorphAnalyzer
-
+from natasha import (
+    MorphVocab,
+    NewsEmbedding,
+    NewsMorphTagger,
+    NewsSyntaxParser,
+    Doc, Segmenter,
+    NewsNERTagger,
+    norm
+)
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 class Item(BaseModel):
     text: str
@@ -20,59 +28,51 @@ model, tokenizer = converter.convert_from_pretrained(
 )
 
 
-def transform_tag(tag):
-    return tag.replace(" ##ии", "ии").replace(" ##и", "й").replace(" ##", "").replace(" . ", ".") \
-        .replace(" ( ", "(").replace(" )", ")").replace(" ) ", ")").strip().title()
+class TagTransformer:
+    def __init__(self):
+        self.morph_vocab = MorphVocab()
+        self.segmenter = Segmenter()
+        emb = NewsEmbedding()
+        self.morph_tagger = NewsMorphTagger(emb)
+        self.syntax_parser = NewsSyntaxParser(emb)
+        self.ner_tagger = NewsNERTagger(emb)
 
+    def transform_tag(self, tag):
+        return tag.replace(" ##ии", "ии").replace(" ##и", "й").replace(" ##", "").replace(" . ", ".") \
+            .replace(" ( ", "(").replace(" )", ")").replace(" ) ", ")").strip().title()
 
-def normalize_tag(text, morph):
-    is_prep = False
-    words = text.split()
-    normalized_words = []
-    for word in words:
-        parsed_word = morph.parse(word)[0]
-        if is_prep:
-            is_prep = False
-            normalized_word = word
-        else:
-            if 'PREP' in parsed_word.tag:
-                is_prep = True
-            if 'NOUN' in parsed_word.tag:
-                if 'sing' in parsed_word.tag:
-                    normalized_word = parsed_word.inflect({'nomn'}).word
-                elif 'plur' in parsed_word.tag:
-                    normalized_word = parsed_word.inflect({'nomn', 'plur'}).word
-                else:
-                    normalized_word = parsed_word.normal_form
-            else:
-                if 'PREP' not in parsed_word.tag and parsed_word.tag.case:
-                    normalized_word = parsed_word.inflect({'nomn'}).word
-                else:
-                    normalized_word = parsed_word.normal_form
-        normalized_words.append(normalized_word)
-    return ' '.join(normalized_words)
+    def normalize_tag(self, text):
+        doc = Doc(text)
+        doc.segment(self.segmenter)
+        doc.tag_morph(self.morph_tagger)
+        doc.parse_syntax(self.syntax_parser)
+        if len(doc.tokens) == 1:
+            doc.tokens[0].lemmatize(self.morph_vocab)
+            return doc.tokens[0].lemma
+        return norm.syntax_normalize(self.morph_vocab, doc.tokens)
 
+    def __call__(self, text):
+        return self.normalize_tag(self.transform_tag(text))
 
 def transform_model_output(token_list, token_labels):
     tag = ""
     tag_label = ""
     tags = []
     tag_labels = []
-    morph = MorphAnalyzer()
-
+    normalizer = TagTransformer()
     for i in range(1, len(token_list)):
         if token_labels[i] == "O":
             if tag != "":
-                norm = normalize_tag(transform_tag(tag), morph)
-                tags.append(transform_tag(norm))
+                normalized = normalizer(tag)
+                tags.append(normalizer.transform_tag(normalized))
                 tag_labels.append(tag_label)
                 tag = ""
             tag_label = "O"
             continue
         if token_labels[i].startswith("B"):
             if tag != "" and token_labels[i][2:] != tag_label:
-                norm = normalize_tag(transform_tag(tag), morph)
-                tags.append(transform_tag(norm))
+                normalized = normalizer(tag)
+                tags.append(normalizer.transform_tag(normalized))
                 tag_labels.append(tag_label)
                 tag = token_list[i]
                 tag_label = token_labels[i][2:]

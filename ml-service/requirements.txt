@@ -4,4 +4,4 @@ pydantic
 torch
 transformers
 lsg_converter
-pymorphy2
+natasha
