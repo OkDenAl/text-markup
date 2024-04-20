@@ -13,6 +13,7 @@ from natasha import (
 )
 from class_predictor import Classificator
 
+
 class Item(BaseModel):
     text: str
 
@@ -27,7 +28,6 @@ model, tokenizer = converter.convert_from_pretrained(
 
 classificator = Classificator()
 
-
 class TagTransformer:
     def __init__(self):
         self.morph_vocab = MorphVocab()
@@ -36,6 +36,7 @@ class TagTransformer:
         self.morph_tagger = NewsMorphTagger(emb)
         self.syntax_parser = NewsSyntaxParser(emb)
         self.ner_tagger = NewsNERTagger(emb)
+
 
     def transform_tag(self, tag):
         return tag.replace(" ##ии", "ии").replace(" ##и", "й").replace(" ##", "").replace(" . ", ".") \
@@ -59,6 +60,7 @@ def transform_model_output(token_list, token_labels):
     tag_label = ""
     tags = []
     tag_labels = []
+
     normalizer = TagTransformer()
 
     for i in range(1, len(token_list)):

@@ -2,20 +2,14 @@ package httpl
 
 import (
 	"context"
-	"io"
-	"mime/multipart"
-
-	"github.com/gabriel-vasile/mimetype"
 	"github.com/pkg/errors"
 
 	"github.com/OkDenAl/text-markup-gateway/internal/domain"
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/model"
-	"github.com/OkDenAl/text-markup-gateway/pkg/logger"
 )
 
 var (
-	ErrInvalidFileExtension = errors.New("invalid file extension")
-	ErrInvalidData          = errors.New("invalid data")
+	ErrInvalidData = errors.New("invalid data")
 )
 
 type MLMarkupRepo struct {
@@ -26,79 +20,28 @@ func NewMLMarkupRepo(client iMLClient) (MLMarkupRepo, error) {
 	return MLMarkupRepo{client: client}, nil
 }
 
-func (r MLMarkupRepo) GetEntitiesFromText(ctx context.Context, text string) (domain.TextEntities, error) {
-	resp, err := r.client.GetPrediction(ctx, model.NewTextMarkupRequest(text))
+func (r MLMarkupRepo) GetTokensFromText(ctx context.Context, text string) (domain.Tokens, error) {
+	tokens, err := r.client.GetTokens(ctx, model.NewTextMarkupRequest(text))
 	if err != nil {
-		return domain.TextEntities{}, err
+		return domain.Tokens{}, err
 	}
 
-	var te domain.TextEntities
-	for i, label := range resp.Labels {
-		if label != "O" {
-			te.Labels = append(te.Labels, resp.Labels[i])
-			te.Tags = append(te.Tags, resp.Tokens[i])
-		}
+	if len(tokens.Tags) == 0 && len(tokens.Labels) == 0 {
+		return domain.Tokens{}, errors.Wrap(ErrInvalidData, "failed to get tokens from text")
 	}
 
-	if len(te.Tags) == 0 && len(te.Labels) == 0 {
-		return domain.TextEntities{}, errors.Wrap(ErrInvalidData, "failed to get entities from text")
-	}
-
-	te.Class = "mock"
-
-	return te, nil
+	return tokens, nil
 }
 
-func (r MLMarkupRepo) GetEntitiesFromFile(
-	ctx context.Context,
-	inputFile *multipart.FileHeader,
-) (domain.TextEntities, error) {
-	file, err := inputFile.Open()
+func (r MLMarkupRepo) GetClassFromText(ctx context.Context, text string) (domain.Class, error) {
+	class, err := r.client.GetClass(ctx, model.NewTextMarkupRequest(text))
 	if err != nil {
-		return domain.TextEntities{}, errors.Wrap(err, "failed to open input file")
+		return domain.Class{}, err
 	}
 
-	data, err := io.ReadAll(file)
-	if err != nil {
-		return domain.TextEntities{}, errors.Wrap(err, "failed to read input file")
+	if class.Class == "" {
+		return domain.Class{}, errors.Wrap(ErrInvalidData, "failed to get class from text")
 	}
 
-	if err = checkFileExtension(data); err != nil {
-		return domain.TextEntities{}, err
-	}
-
-	log := logger.New()
-	log.Debug().Str("data", string(data)).Msg("")
-
-	resp, err := r.client.GetPrediction(ctx, model.NewTextMarkupRequest(string(data)))
-	if err != nil {
-		return domain.TextEntities{}, err
-	}
-
-	var te domain.TextEntities
-	for i, label := range resp.Labels {
-		if label != "O" {
-			te.Labels = append(te.Labels, resp.Labels[i])
-			te.Tags = append(te.Tags, resp.Tokens[i])
-		}
-	}
-
-	if len(te.Tags) == 0 && len(te.Labels) == 0 {
-		return domain.TextEntities{}, errors.Wrap(ErrInvalidData, "failed to get entities from text")
-	}
-
-	te.Class = "mock"
-
-	return te, nil
-}
-
-func checkFileExtension(data []byte) error {
-	var allowed = []string{"text/plain"}
-
-	mtype := mimetype.Detect(data)
-	if !mimetype.EqualsAny(mtype.String(), allowed...) {
-		return errors.Wrap(ErrInvalidFileExtension, "failed to validate input file")
-	}
-
-	return nil
+	return class, nil
 }

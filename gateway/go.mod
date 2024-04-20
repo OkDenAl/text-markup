@@ -3,7 +3,10 @@ module github.com/OkDenAl/text-markup-gateway
 go 1.21.4
 
 require (
+	github.com/benbjohnson/clock v1.3.0
+	github.com/cenkalti/backoff/v3 v3.1.1
 	github.com/ds248a/closer v1.0.1
+	github.com/gabriel-vasile/mimetype v1.4.2
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.14.0
 	github.com/ilyakaznacheev/cleanenv v1.4.2
@@ -13,16 +16,14 @@ require (
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2
 	github.com/swaggo/gin-swagger v1.4.3
 	github.com/swaggo/swag v1.8.2
+	golang.org/x/sync v0.1.0
 )
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
-	github.com/cenkalti/backoff/v3 v3.1.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.20.0 // indirect
