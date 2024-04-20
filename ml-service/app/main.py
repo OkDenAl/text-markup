@@ -11,6 +11,7 @@ from natasha import (
     NewsNERTagger,
     norm
 )
+from class_predictor import Classificator
 
 class Item(BaseModel):
     text: str
@@ -23,6 +24,8 @@ model, tokenizer = converter.convert_from_pretrained(
     'KodKio/ruBert-base-finetuned-ner',
     architecture="BertForTokenClassification"
 )
+
+classificator = Classificator()
 
 
 class TagTransformer:
@@ -57,6 +60,7 @@ def transform_model_output(token_list, token_labels):
     tags = []
     tag_labels = []
     normalizer = TagTransformer()
+
     for i in range(1, len(token_list)):
         if token_labels[i] == "O":
             if tag != "":
@@ -82,8 +86,8 @@ def transform_model_output(token_list, token_labels):
     return tags, tag_labels
 
 
-@app.get("/api/v1/prediction")
-async def get_prediction(item: Item):
+@app.get("/api/v1/tokens")
+async def get_tokens(item: Item):
     try:
         text = item.text
         inputs = tokenizer(text, return_tensors="pt")
@@ -101,6 +105,19 @@ async def get_prediction(item: Item):
 
         print(token_list, token_labels)
 
-        return {"tokens": token_list, "labels": token_labels}
+        return {"tags": token_list, "labels": token_labels}
+    except Exception as e:
+        print(e)
+
+
+@app.get("/api/v1/class")
+async def get_class(item: Item):
+    # classes = ["Home", "Health", "Celebrities", "Films and Shows", "Incidents", "Researches"]
+    classes = ["Celebrities", "Incidents", 'Weather', "Family", "Sport", "Health", "Realty", "Home", "Films & Shows"]
+    try:
+        text = item.text
+        embedding = classificator.get_embeddings([text])
+        class_label = classificator.predict(embedding)
+        return {"class": classes[class_label]}
     except Exception as e:
         print(e)
