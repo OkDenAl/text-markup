@@ -2,7 +2,6 @@ from fastapi import FastAPI
 import torch
 from pydantic import BaseModel
 from own_lsg_converter import MYLSGConverter
-import uvicorn
 from natasha import (
     MorphVocab,
     NewsEmbedding,
@@ -12,8 +11,6 @@ from natasha import (
     NewsNERTagger,
     norm
 )
-import os
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 class Item(BaseModel):
     text: str
