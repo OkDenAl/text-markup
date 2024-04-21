@@ -39,8 +39,17 @@ class TagTransformer:
 
 
     def transform_tag(self, tag):
-        return tag.replace(" ##ии", "ии").replace(" ##и", "й").replace(" ##", "").replace(" . ", ".") \
-            .replace(" ( ", "(").replace(" )", ")").replace(" ) ", ")").strip().title()
+        return tag.replace(" ##ии", "ии")\
+            .replace(" ##и", "й")\
+            .replace("нии", "ний")\
+            .replace("вои", "вой")\
+            .replace(" ##", "") \
+            .replace(" , ", ", ") \
+            .replace(" . ", ".")\
+            .replace(" ( ", "(")\
+            .replace(" )", ")")\
+            .replace(" ) ", ")")\
+            .strip().title()
 
     def normalize_tag(self, text):
         doc = Doc(text)
@@ -67,16 +76,18 @@ def transform_model_output(token_list, token_labels):
         if token_labels[i] == "O":
             if tag != "":
                 normalized = normalizer(tag)
-                tags.append(normalizer.transform_tag(normalized))
-                tag_labels.append(tag_label)
+                if tag_label != "O":
+                    tags.append(normalizer.transform_tag(normalized))
+                    tag_labels.append(tag_label)
                 tag = ""
             tag_label = "O"
             continue
         if token_labels[i].startswith("B"):
             if tag != "" and token_labels[i][2:] != tag_label:
                 normalized = normalizer(tag)
-                tags.append(normalizer.transform_tag(normalized))
-                tag_labels.append(tag_label)
+                if tag_label != "O":
+                    tags.append(normalizer.transform_tag(normalized))
+                    tag_labels.append(tag_label)
                 tag = token_list[i]
                 tag_label = token_labels[i][2:]
                 continue
@@ -100,6 +111,8 @@ async def get_tokens(item: Item):
         predicted_labels = torch.argmax(outputs.logits, dim=2).squeeze().tolist()
 
         token_list = tokenizer.convert_ids_to_tokens(inputs["input_ids"].squeeze().tolist())
+
+        print(token_list)
 
         token_labels = [model.config.id2label[label_id] for label_id in predicted_labels]
 
