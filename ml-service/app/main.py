@@ -127,9 +127,13 @@ async def get_tokens(item: Item):
 
 @app.get("/api/v1/class")
 async def get_class(item: Item):
-    # classes = ["Home", "Health", "Celebrities", "Films and Shows", "Incidents", "Researches"]
-    # classes = ["Celebrities", "Incidents", 'Weather', "Family", "Sport", "Health", "Realty", "Home", "Films & Shows"]
-    classes = ["Celebrities", "Films & Shows", "Incidents", "Family", "Weather", "Sports", "Money", "Health", "Interior", "Social Security"]
+    # classes = ["Home", "Health", "Celebrities", "Films and Shows", "Incidents", "Researches"] # kmeans_model
+    # classes = ["Celebrities", "Incidents", 'Weather',
+    #           "Family", "Sport", "Health", "Realty", "Home", "Films & Shows"] # kmeans_model2
+    # classes = ["Celebrities", "Films & Shows", "Incidents", "Family", "Weather",
+    #            "Sports", "Money", "Health", "Interior", "Social Security"] # kmeans_model_10_clusters
+    classes = ["Crimes", "Food", "Social Security", "Celebrities", "Films & Shows", "Regional news", "Family",
+               "Incidents", "Weather", "Sports", "Finances", "Health"]
     try:
         text = item.text
         embedding = classificator.get_embeddings([text])
