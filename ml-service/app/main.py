@@ -134,6 +134,7 @@ async def get_class(item: Item):
     #            "Sports", "Money", "Health", "Interior", "Social Security"] # kmeans_model_10_clusters
     classes = ["Crimes", "Food", "Social Security", "Celebrities", "Films & Shows", "Regional news", "Family",
                "Incidents", "Weather", "Sports", "Finances", "Health"] # kmeans_model_12_clusters
+
     try:
         text = item.text
         embedding = classificator.get_embeddings([text])
