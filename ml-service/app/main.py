@@ -81,7 +81,8 @@ async def get_tokens(item: Item):
 @app.get("/api/v1/class")
 async def get_class(item: Item):
     # classes = ["Home", "Health", "Celebrities", "Films and Shows", "Incidents", "Researches"]
-    classes = ["Celebrities", "Incidents", 'Weather', "Family", "Sport", "Health", "Realty", "Home", "Films & Shows"]
+    # classes = ["Celebrities", "Incidents", 'Weather', "Family", "Sport", "Health", "Realty", "Home", "Films & Shows"]
+    classes = ["Celebrities", "Films & Shows", "Incidents", "Family", "Weather", "Sports", "Money", "Health", "Interior", "Social Security"]
     try:
         text = item.text
         embedding = classificator.get_embeddings([text])
