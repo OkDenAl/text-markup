@@ -1,3 +1,4 @@
+from docutils.nodes import classifier
 from fastapi import FastAPI
 import torch
 from pydantic import BaseModel
@@ -11,7 +12,7 @@ from natasha import (
     NewsNERTagger,
     norm
 )
-from class_predictor import Classificator
+from class_predictor import Classificator, Classificator2
 
 
 class Item(BaseModel):
@@ -27,6 +28,8 @@ model, tokenizer = converter.convert_from_pretrained(
 )
 
 classificator = Classificator()
+classificator2 = Classificator2()
+
 
 class TagTransformer:
     def __init__(self):
@@ -37,18 +40,17 @@ class TagTransformer:
         self.syntax_parser = NewsSyntaxParser(emb)
         self.ner_tagger = NewsNERTagger(emb)
 
-
     def transform_tag(self, tag):
-        return tag.replace(" ##ии", "ии")\
-            .replace(" ##и", "й")\
-            .replace("нии", "ний")\
-            .replace("вои", "вой")\
+        return tag.replace(" ##ии", "ии") \
+            .replace(" ##и", "й") \
+            .replace("нии", "ний") \
+            .replace("вои", "вой") \
             .replace(" ##", "") \
             .replace(" , ", ", ") \
-            .replace(" . ", ".")\
-            .replace(" ( ", "(")\
-            .replace(" )", ")")\
-            .replace(" ) ", ")")\
+            .replace(" . ", ".") \
+            .replace(" ( ", "(") \
+            .replace(" )", ")") \
+            .replace(" ) ", ")") \
             .strip().title()
 
     def normalize_tag(self, text):
@@ -63,6 +65,7 @@ class TagTransformer:
 
     def __call__(self, text):
         return self.normalize_tag(self.transform_tag(text))
+
 
 def transform_model_output(token_list, token_labels):
     tag = ""
@@ -132,13 +135,17 @@ async def get_class(item: Item):
     #           "Family", "Sport", "Health", "Realty", "Home", "Films & Shows"] # kmeans_model2
     # classes = ["Celebrities", "Films & Shows", "Incidents", "Family", "Weather",
     #            "Sports", "Money", "Health", "Interior", "Social Security"] # kmeans_model_10_clusters
-    classes = ["Crimes", "Food", "Social Security", "Celebrities", "Films & Shows", "Regional news", "Family",
-               "Incidents", "Weather", "Sports", "Finances", "Health"] # kmeans_model_12_clusters
+    # classes = ["Crimes", "Food", "Social Security", "Celebrities", "Films & Shows", "Regional news", "Family",
+    #            "Incidents", "Weather", "Sports", "Finances", "Health"]  # kmeans_model_12_clusters
+    classes = ["Design", "Foreign Films", "Sports", "Incidents", "Celebrities", "Shows", "Researches", "Health", "Food",
+               "Regional news", "Children", "Russian Films", "Doctors", "Home", "Weather"] # kmeans_15_clusters_new_model.pkl
 
     try:
         text = item.text
-        embedding = classificator.get_embeddings([text])
-        class_label = classificator.predict(embedding)
+        # embedding = classificator.get_embeddings([text])
+        # class_label = classificator.predict(embedding)
+        embedding = classificator2.get_embeddings(text)
+        class_label = classificator2.predict(embedding)
         return {"class": classes[class_label]}
     except Exception as e:
         print(e)
