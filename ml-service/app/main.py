@@ -12,6 +12,7 @@ from natasha import (
     norm
 )
 from class_predictor import Classificator
+from collections import OrderedDict
 
 
 class Item(BaseModel):
@@ -42,6 +43,7 @@ class TagTransformer:
         return tag.replace(" ##ии", "ии")\
             .replace(" ##и", "й")\
             .replace("нии", "ний")\
+            .replace("нои", "ной")\
             .replace("вои", "вой")\
             .replace(" ##", "") \
             .replace(" , ", ", ") \
@@ -76,7 +78,7 @@ def transform_model_output(token_list, token_labels):
         if token_labels[i] == "O":
             if tag != "":
                 normalized = normalizer(tag)
-                if tag_label != "O":
+                if tag_label not in ["O", "AGE", "DATE", "MONEY", "NUMBER", "ORDINAL", "PERCENT", "TIME"]:
                     tags.append(normalizer.transform_tag(normalized))
                     tag_labels.append(tag_label)
                 tag = ""
@@ -85,7 +87,7 @@ def transform_model_output(token_list, token_labels):
         if token_labels[i].startswith("B"):
             if tag != "" and token_labels[i][2:] != tag_label:
                 normalized = normalizer(tag)
-                if tag_label != "O":
+                if tag_label not in ["O", "AGE", "DATE", "MONEY", "NUMBER", "ORDINAL", "PERCENT", "TIME"]:
                     tags.append(normalizer.transform_tag(normalized))
                     tag_labels.append(tag_label)
                 tag = token_list[i]
@@ -95,6 +97,11 @@ def transform_model_output(token_list, token_labels):
             tag_label = token_labels[i][2:]
         if token_labels[i].startswith("I"):
             tag += (" " + token_list[i])
+
+    tmp = list(OrderedDict.fromkeys(zip(tags, tag_labels)))
+
+    tags = [i[0] for i in tmp]
+    tag_labels = [i[1] for i in tmp]
 
     return tags, tag_labels
 
