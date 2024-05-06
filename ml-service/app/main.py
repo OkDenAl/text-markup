@@ -1,4 +1,3 @@
-from docutils.nodes import classifier
 from fastapi import FastAPI
 import torch
 from pydantic import BaseModel
