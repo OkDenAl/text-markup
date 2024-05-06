@@ -7,4 +7,3 @@ lsg_converter
 natasha
 joblib
 scikit-learn
-torch.nn.functional
