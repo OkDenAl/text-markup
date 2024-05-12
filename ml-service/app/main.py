@@ -11,6 +11,8 @@ from natasha import (
     NewsNERTagger,
     norm
 )
+from transformers import pipeline
+from keybert import KeyBERT
 
 from collections import OrderedDict
 from class_predictor import Classificator, Classificator2
@@ -30,6 +32,11 @@ model, tokenizer = converter.convert_from_pretrained(
 
 classificator = Classificator()
 classificator2 = Classificator2()
+
+
+keywords_model = pipeline("feature-extraction", model="KodKio/rubert-finetuned-keywords")
+
+kw_model = KeyBERT(model=keywords_model)
 
 
 class TagTransformer:
@@ -69,13 +76,14 @@ class TagTransformer:
         return self.normalize_tag(self.transform_tag(text))
 
 
+normalizer = TagTransformer()
+
+
 def transform_model_output(token_list, token_labels):
     tag = ""
     tag_label = ""
     tags = []
     tag_labels = []
-
-    normalizer = TagTransformer()
 
     for i in range(1, len(token_list)):
         if token_labels[i] == "O":
@@ -154,5 +162,28 @@ async def get_class(item: Item):
         embedding = classificator2.get_embeddings(text)
         class_label = classificator2.predict(embedding)
         return {"class": classes[class_label]}
+    except Exception as e:
+        print(e)
+
+
+@app.get("/api/v1/keywords")
+async def get_tokens(item: Item):
+    try:
+        text = item.text
+
+        keywords_1 = kw_model.extract_keywords(text, keyphrase_ngram_range=(1, 1))
+        keywords_2 = kw_model.extract_keywords(text, keyphrase_ngram_range=(2, 2))
+        keywords_3 = kw_model.extract_keywords(text, keyphrase_ngram_range=(3, 3))
+
+        keywords = keywords_1 + keywords_2 + keywords_3
+        keywords.sort(key=lambda x: x[1], reverse=True)
+
+        words = [x[0] for x in keywords]
+        scores = [x[1] for x in keywords]
+
+        for i in range(len(words)):
+            print(words[i], scores[i])
+
+        return {"keywords": words, "scores": scores}
     except Exception as e:
         print(e)
