@@ -7,3 +7,4 @@ lsg_converter
 natasha
 joblib
 scikit-learn
+keybert
