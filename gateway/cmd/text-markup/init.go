@@ -58,7 +58,6 @@ func initAndStartHTTPServer(env string, cfg config.ServerConfig, h handler.Handl
 	api := engine.Group("api/v1")
 	api.Use(
 		gin.Recovery(),
-		middleware.CORS(),
 		middleware.Logger(),
 	)
 	h.SetRouter(api)
