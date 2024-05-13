@@ -55,7 +55,7 @@ func getMarkup(markup iMLMarkup) gin.HandlerFunc {
 		if err = eg.Wait(); err != nil {
 			switch {
 			case errors.Is(err, httpl.ErrInvalidData):
-				c.JSON(http.StatusNoContent, responses.Error(err))
+				c.JSON(http.StatusNoContent, nil)
 				_ = c.AbortWithError(http.StatusNoContent, err)
 			default:
 				c.JSON(http.StatusInternalServerError, responses.Error(err))
