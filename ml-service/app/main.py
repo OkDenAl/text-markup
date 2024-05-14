@@ -170,6 +170,7 @@ async def get_class(item: Item):
 async def get_tokens(item: Item):
     try:
         text = item.text
+        topN = item.keyword_count
 
         keywords_1 = kw_model.extract_keywords(text, keyphrase_ngram_range=(1, 1))
         keywords_2 = kw_model.extract_keywords(text, keyphrase_ngram_range=(2, 2))
@@ -184,6 +185,9 @@ async def get_tokens(item: Item):
         for i in range(len(words)):
             print(words[i], scores[i])
 
-        return {"keywords": words, "scores": scores}
+        if len(words) < topN:
+            return {"keywords": words, "scores": scores}
+
+        return {"keywords": words[:topN], "scores": scores[:topN]}
     except Exception as e:
         print(e)

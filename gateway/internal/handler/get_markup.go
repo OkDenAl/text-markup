@@ -37,9 +37,10 @@ func getMarkup(markup iMLMarkup) gin.HandlerFunc {
 		}
 
 		var (
-			eg     errgroup.Group
-			tokens domain.Tokens
-			class  domain.Class
+			eg       errgroup.Group
+			tokens   domain.Tokens
+			class    domain.Class
+			keywords domain.Keywords
 		)
 
 		eg.Go(func() error {
@@ -49,6 +50,11 @@ func getMarkup(markup iMLMarkup) gin.HandlerFunc {
 
 		eg.Go(func() error {
 			class, err = markup.GetClassFromText(c, req.Text)
+			return err
+		})
+
+		eg.Go(func() error {
+			keywords, err = markup.GetKeywordsFromText(c, req.Text)
 			return err
 		})
 
@@ -64,6 +70,6 @@ func getMarkup(markup iMLMarkup) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, domain.NewTextEntities(class.Class, tokens.Labels, tokens.Tags))
+		c.JSON(http.StatusOK, domain.NewTextEntities(class.Class, tokens.Labels, tokens.Tags, keywords.Keywords))
 	}
 }
