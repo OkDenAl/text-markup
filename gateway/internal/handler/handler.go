@@ -14,6 +14,7 @@ var ErrValidationFailed = errors.New("validation failed")
 type iMLMarkup interface {
 	GetTokensFromText(ctx context.Context, text string) (domain.Tokens, error)
 	GetClassFromText(ctx context.Context, text string) (domain.Class, error)
+	GetKeywordsFromText(ctx context.Context, text string) (domain.Keywords, error)
 }
 
 type Handler struct {

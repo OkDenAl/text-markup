@@ -48,7 +48,10 @@ const docTemplate = `{
                         }
                     },
                     "204": {
-                        "description": "No Content"
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/responses.HTTPError"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
@@ -116,6 +119,12 @@ const docTemplate = `{
             "properties": {
                 "class": {
                     "type": "string"
+                },
+                "keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "labels": {
                     "type": "array",

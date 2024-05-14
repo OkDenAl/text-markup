@@ -45,3 +45,17 @@ func (r MLMarkupRepo) GetClassFromText(ctx context.Context, text string) (domain
 
 	return class, nil
 }
+
+func (r MLMarkupRepo) GetKeywordsFromText(ctx context.Context, text string) (domain.Keywords, error) {
+	const topN = 5
+	keywordFromML, err := r.client.GetKeywords(ctx, model.NewTextKeywordsRequest(text, topN))
+	if err != nil {
+		return domain.Keywords{}, err
+	}
+
+	if len(keywordFromML.Keywords) == 0 {
+		return domain.Keywords{}, errors.Wrap(ErrInvalidData, "failed to get keywords from text")
+	}
+
+	return domain.NewKeywords(keywordFromML.Keywords), nil
+}

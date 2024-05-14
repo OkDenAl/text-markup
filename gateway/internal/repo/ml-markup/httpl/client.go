@@ -21,6 +21,7 @@ import (
 type iMLClient interface {
 	GetTokens(ctx context.Context, request model.TextMarkupRequest) (domain.Tokens, error)
 	GetClass(ctx context.Context, request model.TextMarkupRequest) (domain.Class, error)
+	GetKeywords(ctx context.Context, reqData model.TextKeywordsRequest) (keywordsResp TextKeywordsResponse, err error)
 }
 
 type MlClient struct {
@@ -59,7 +60,8 @@ func (c MlClient) GetTokens(ctx context.Context, reqData model.TextMarkupRequest
 
 	var req *http.Request
 	req, err = http.NewRequest(
-		"GET", fmt.Sprintf("http://%s:%s/api/v1/tokens", c.cfg.Host, c.cfg.Port), bytes.NewBuffer(reqJSON),
+		"GET", fmt.Sprintf("http://%s:%s/api/v1/tokens", c.cfg.Host, c.cfg.Port),
+		bytes.NewBuffer(reqJSON),
 	)
 	if err != nil {
 		return domain.Tokens{}, errors.Wrapf(err, "failed to create http request to %s", req.URL.String())
@@ -79,7 +81,7 @@ func (c MlClient) GetTokens(ctx context.Context, reqData model.TextMarkupRequest
 	}
 
 	if err = json.Unmarshal(body, &tokens); err != nil {
-		return domain.Tokens{}, errors.Wrap(err, "failed unmarshal response data")
+		return domain.Tokens{}, errors.Wrap(err, "failed to unmarshal response data")
 	}
 
 	return tokens, nil
@@ -119,8 +121,52 @@ func (c MlClient) GetClass(ctx context.Context, reqData model.TextMarkupRequest)
 	}
 
 	if err = json.Unmarshal(body, &class); err != nil {
-		return domain.Class{}, errors.Wrap(err, "failed unmarshal response data")
+		return domain.Class{}, errors.Wrap(err, "failed to unmarshal response data")
 	}
 
 	return class, nil
+}
+
+func (c MlClient) GetKeywords(
+	ctx context.Context,
+	reqData model.TextKeywordsRequest,
+) (keywordsResp TextKeywordsResponse, err error) {
+	if !c.cb.Ready() {
+		return TextKeywordsResponse{}, circuitbreaker.ErrOpen
+	}
+	defer func() { err = c.cb.Done(ctx, err) }()
+
+	var reqJSON []byte
+	reqJSON, err = json.Marshal(reqData)
+	if err != nil {
+		return TextKeywordsResponse{}, errors.Wrap(err, "failed to marshal req data")
+	}
+
+	var req *http.Request
+	req, err = http.NewRequest(
+		"GET", fmt.Sprintf("http://%s:%s/api/v1/keywords", c.cfg.Host, c.cfg.Port),
+		bytes.NewBuffer(reqJSON),
+	)
+	if err != nil {
+		return TextKeywordsResponse{}, errors.Wrapf(err, "failed to create http request to %s", req.URL.String())
+	}
+
+	var clientResp *http.Response
+	clientResp, err = c.client.Do(req)
+	if err != nil {
+		return TextKeywordsResponse{}, errors.Wrapf(err, "failed to send http request to %s", req.URL.String())
+	}
+	defer clientResp.Body.Close()
+
+	var body []byte
+	body, err = io.ReadAll(clientResp.Body)
+	if err != nil {
+		return TextKeywordsResponse{}, errors.Wrap(err, "failed to read response body")
+	}
+
+	if err = json.Unmarshal(body, &keywordsResp); err != nil {
+		return TextKeywordsResponse{}, errors.Wrap(err, "failed to unmarshal response data")
+	}
+
+	return keywordsResp, nil
 }
