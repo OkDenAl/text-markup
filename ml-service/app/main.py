@@ -54,7 +54,7 @@ class TagTransformer:
 
     def transform_tag(self, tag):
         return tag.replace(" ##ии", "ии")\
-            .replace(" ##и", "й")\
+            .replace(" ##и", "й") \
             .replace("нии", "ний")\
             .replace("нои", "ной")\
             .replace("вои", "вой")\
@@ -176,12 +176,12 @@ async def get_keywords(item: KeywordsReq):
         text = item.text
         kw_count = item.keyword_count
 
-        keywords_1 = kw_model.extract_keywords(text, keyphrase_ngram_range=(1, 1))
-        keywords_2 = kw_model.extract_keywords(text, keyphrase_ngram_range=(2, 2))
+        # keywords_1 = kw_model.extract_keywords(text, keyphrase_ngram_range=(1, 1))
+        # keywords_2 = kw_model.extract_keywords(text, keyphrase_ngram_range=(2, 2))
         keywords_3 = kw_model.extract_keywords(text, keyphrase_ngram_range=(3, 3))
 
-        keywords = keywords_1 + keywords_2 + keywords_3
-        keywords.sort(key=lambda x: x[1], reverse=True)
+        keywords = keywords_3
+        # keywords.sort(key=lambda x: x[1], reverse=True)
 
         words = [x[0] for x in keywords]
         scores = [x[1] for x in keywords]
@@ -189,9 +189,6 @@ async def get_keywords(item: KeywordsReq):
         for i in range(len(words)):
             print(words[i], scores[i])
 
-        if len(words) < kw_count:
-            return {"keywords": words, "scores": scores}
-
-        return {"keywords": words[:kw_count], "scores": scores[:kw_count]}
+        return {"keywords": words, "scores": scores}
     except Exception as e:
         print(e)

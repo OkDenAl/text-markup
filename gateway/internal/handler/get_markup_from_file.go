@@ -2,14 +2,15 @@ package handler
 
 import (
 	"github.com/OkDenAl/text-markup-gateway/internal/domain"
+	"github.com/fumiama/go-docx"
+	"github.com/gabriel-vasile/mimetype"
+	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 	"io"
 	"mime/multipart"
 	"net/http"
-
-	"github.com/gabriel-vasile/mimetype"
-	"github.com/gin-gonic/gin"
-	"github.com/pkg/errors"
+	"strings"
 
 	"github.com/OkDenAl/text-markup-gateway/internal/handler/responses"
 	"github.com/OkDenAl/text-markup-gateway/internal/repo/ml-markup/httpl"
@@ -100,11 +101,38 @@ func getDataFromFile(inputFile *multipart.FileHeader) (string, error) {
 	if err = checkFileExtension(data); err != nil {
 		return "", err
 	}
+
+	docsData := getDocsFileData(file, inputFile.Size)
+	if docsData != "" {
+		return docsData, nil
+	}
+
 	return string(data), nil
 }
 
+func getDocsFileData(file multipart.File, size int64) string {
+	var sb strings.Builder
+	doc, _ := docx.Parse(file, size)
+	if doc != nil {
+		for _, it := range doc.Document.Body.Items {
+			switch item := it.(type) {
+			case *docx.Paragraph:
+				sb.WriteString(item.String() + "\n")
+			case *docx.Table:
+				sb.WriteString(item.String() + "\n")
+			}
+		}
+	}
+
+	return sb.String()
+}
+
 func checkFileExtension(data []byte) error {
-	var allowed = []string{"text/plain"}
+	var allowed = []string{
+		"text/plain",
+		"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+		"application/msword",
+	}
 
 	mtype := mimetype.Detect(data)
 	if !mimetype.EqualsAny(mtype.String(), allowed...) {
