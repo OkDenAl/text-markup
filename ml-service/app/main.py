@@ -189,6 +189,9 @@ async def get_keywords(item: KeywordsReq):
         for i in range(len(words)):
             print(words[i], scores[i])
 
-        return {"keywords": words, "scores": scores}
+        if len(words) < kw_count:
+            return {"keywords": words, "scores": scores}
+
+        return {"keywords": words[:kw_count], "scores": scores[:kw_count]}
     except Exception as e:
         print(e)
