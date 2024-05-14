@@ -53,9 +53,5 @@ func (r MLMarkupRepo) GetKeywordsFromText(ctx context.Context, text string) (dom
 		return domain.Keywords{}, err
 	}
 
-	if len(keywordFromML.Keywords) == 0 {
-		return domain.Keywords{}, errors.Wrap(ErrInvalidData, "failed to get keywords from text")
-	}
-
 	return domain.NewKeywords(keywordFromML.Keywords), nil
 }

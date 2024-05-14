@@ -21,6 +21,10 @@ from class_predictor import Classificator, Classificator2
 class Item(BaseModel):
     text: str
 
+class KeywordsReq(BaseModel):
+    text: str
+    keyword_count: int
+
 
 app = FastAPI()
 
@@ -167,10 +171,10 @@ async def get_class(item: Item):
 
 
 @app.get("/api/v1/keywords")
-async def get_tokens(item: Item):
+async def get_keywords(item: KeywordsReq):
     try:
         text = item.text
-        topN = item.keyword_count
+        kw_count = item.keyword_count
 
         keywords_1 = kw_model.extract_keywords(text, keyphrase_ngram_range=(1, 1))
         keywords_2 = kw_model.extract_keywords(text, keyphrase_ngram_range=(2, 2))
@@ -185,9 +189,9 @@ async def get_tokens(item: Item):
         for i in range(len(words)):
             print(words[i], scores[i])
 
-        if len(words) < topN:
+        if len(words) < kw_count:
             return {"keywords": words, "scores": scores}
 
-        return {"keywords": words[:topN], "scores": scores[:topN]}
+        return {"keywords": words[:kw_count], "scores": scores[:kw_count]}
     except Exception as e:
         print(e)
