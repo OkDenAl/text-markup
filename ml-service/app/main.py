@@ -159,7 +159,7 @@ async def get_class(item: Item):
     # classes = ["Design", "Foreign Films", "Sports", "Incidents", "Celebrities", "Shows", "Researches", "Health", "Food",
     #            "Regional news", "Children", "Russian Films", "Doctors", "Home", "Weather"] # kmeans_15_clusters_new_model.pkl
     classes = ["Sports", "Money", "Food", "Crimes", "Incidents", "Design", "Events", "Celebrities", "Health",
-               "Infrastructure", "Films and Shows", "Politics", "Children and Parents", "Weather", "Regional news"] #
+               "Infrastructure", "Films and Shows", "Politics", "Children and Parents", "Weather", "Regional news"] # kmeans_15_clusters_politics.pkl
 
     try:
         text = item.text
