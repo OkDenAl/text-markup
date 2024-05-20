@@ -8,3 +8,4 @@ natasha
 joblib
 scikit-learn
 keybert
+scipy
