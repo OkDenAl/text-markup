@@ -164,7 +164,7 @@ def process_list(input_list):
             indexes.add(i)
 
     for i, value in enumerate(input_list):
-        if value > 0.078 and i not in indexes:
+        if value > 0.072 and i not in indexes:
             result.append((i, value))
             indexes.add(i)
 
