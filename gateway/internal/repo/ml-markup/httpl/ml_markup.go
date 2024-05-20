@@ -27,7 +27,7 @@ func (r MLMarkupRepo) GetTokensFromText(ctx context.Context, text string) (domai
 	}
 
 	if len(tokens.Tags) == 0 && len(tokens.Labels) == 0 {
-		return domain.Tokens{}, errors.Wrap(ErrInvalidData, "failed to get tokens from text")
+		return domain.Tokens{Tags: []string{}, Labels: []string{}}, nil
 	}
 
 	return tokens, nil
@@ -39,10 +39,6 @@ func (r MLMarkupRepo) GetClassFromText(ctx context.Context, text string) (domain
 		return domain.Class{}, err
 	}
 
-	if class.Class == "" {
-		return domain.Class{}, errors.Wrap(ErrInvalidData, "failed to get class from text")
-	}
-
 	return class, nil
 }
 
@@ -51,6 +47,10 @@ func (r MLMarkupRepo) GetKeywordsFromText(ctx context.Context, text string) (dom
 	keywordFromML, err := r.client.GetKeywords(ctx, model.NewTextKeywordsRequest(text, topN))
 	if err != nil {
 		return domain.Keywords{}, err
+	}
+
+	if len(keywordFromML.Keywords) == 0 {
+		return domain.Keywords{Keywords: []string{}}, nil
 	}
 
 	return domain.NewKeywords(keywordFromML.Keywords), nil
