@@ -57,17 +57,17 @@ func getMarkupFromFile(markup iMLMarkup) gin.HandlerFunc {
 		)
 
 		eg.Go(func() error {
+			keywords, err = markup.GetKeywordsFromText(c, text)
+			return err
+		})
+
+		eg.Go(func() error {
 			tokens, err = markup.GetTokensFromText(c, text)
 			return err
 		})
 
 		eg.Go(func() error {
 			class, err = markup.GetClassFromText(c, text)
-			return err
-		})
-
-		eg.Go(func() error {
-			keywords, err = markup.GetKeywordsFromText(c, text)
 			return err
 		})
 
@@ -83,7 +83,8 @@ func getMarkupFromFile(markup iMLMarkup) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, domain.NewTextEntities(class.Class, tokens.Labels, tokens.Tags, keywords.Keywords))
+		c.JSON(http.StatusOK,
+			domain.NewFileTextEntities(text, class.Class, tokens.Labels, tokens.Tags, keywords.Keywords))
 	}
 }
 

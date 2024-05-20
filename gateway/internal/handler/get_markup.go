@@ -44,17 +44,17 @@ func getMarkup(markup iMLMarkup) gin.HandlerFunc {
 		)
 
 		eg.Go(func() error {
+			keywords, err = markup.GetKeywordsFromText(c, req.Text)
+			return err
+		})
+
+		eg.Go(func() error {
 			tokens, err = markup.GetTokensFromText(c, req.Text)
 			return err
 		})
 
 		eg.Go(func() error {
 			class, err = markup.GetClassFromText(c, req.Text)
-			return err
-		})
-
-		eg.Go(func() error {
-			keywords, err = markup.GetKeywordsFromText(c, req.Text)
 			return err
 		})
 
