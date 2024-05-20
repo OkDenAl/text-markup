@@ -153,18 +153,16 @@ def process_list(input_list):
     max_index = input_list.index(max_value)
 
     indexes = set()
-    # Condition 1: Maximum value and its index
+
     result = [(max_index, max_value)]
     indexes.add(max_index)
 
-    # Condition 2: Values within max - 0.005 and greater than 0.07
     for i, value in enumerate(input_list):
         if ((max_value > 0.071 and 0.07 < value and value >= max_value - 0.0008) or
             value >= max_value - 0.0008) and i not in indexes:
             result.append((i, value))
             indexes.add(i)
 
-    #  Condition 3: Values greater than 0.075
     for i, value in enumerate(input_list):
         if value > 0.078 and i not in indexes:
             result.append((i, value))
@@ -185,7 +183,8 @@ async def get_class(item: Item):
     # classes = ["Design", "Foreign Films", "Sports", "Incidents", "Celebrities", "Shows", "Researches", "Health", "Food",
     #           "Regional news", "Children", "Russian Films", "Doctors", "Home",
     #           "Weather"]  # kmeans_15_clusters_new_model.pkl
-    classes = ["Regional News", "Kids & Parents", "Sports celebrities", "Design", "Health", "Films & Shows", "Incidents", "Diseases",
+    classes = ["Regional News", "Kids & Parents", "Sports celebrities", "Design", "Health", "Films & Shows",
+               "Incidents", "Diseases",
                "Celebrities", "Money", "Food", "Home", "Politics", 'Weather', "Sports"]  # kmeans_15_clusterss_2005.pkl
 
     try:
