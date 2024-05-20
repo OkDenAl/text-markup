@@ -3,7 +3,7 @@ uvicorn
 pydantic
 torch
 transformers
-lsg_converter
+lsg_converter==0.1.9
 natasha
 joblib
 scikit-learn
