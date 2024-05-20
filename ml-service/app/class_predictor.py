@@ -1,8 +1,10 @@
 import torch
 import joblib
+import numpy as np
 
 from transformers import AutoModel, AutoTokenizer
 import torch.nn.functional as F
+from scipy.spatial.distance import cdist
 
 device = torch.device('cpu')
 
@@ -13,7 +15,7 @@ class Classificator:
         self.tokenizer = AutoTokenizer.from_pretrained('DeepPavlov/rubert-base-cased-sentence')
         self.bert.to(device)
 
-        self.kmeans = joblib.load('model_data/kmeans_15_clusters_politics.pkl')
+        self.kmeans = joblib.load('model_data/kmeans_15_clusterss_2005.pkl')
 
     def get_embeddings(self, text_list):
         encoded_input = self.tokenizer(
@@ -35,7 +37,7 @@ class Classificator2:
         self.model = AutoModel.from_pretrained('sentence-transformers/distiluse-base-multilingual-cased-v1')
         self.model.to(device)
 
-        self.kmeans = joblib.load('model_data/kmeans_15_clusters_new_model.pkl')
+        self.kmeans = joblib.load('model_data/kmeans_15_clusterss_2005.pkl')
 
     def mean_pooling(self, model_output, attention_mask):
         token_embeddings = model_output[0]
@@ -54,4 +56,18 @@ class Classificator2:
     def predict(self, embedding):
         cluster_labels = self.kmeans.predict(list(embedding.cpu().detach().numpy()))
         return cluster_labels[0]
+
+    def predict_cluster_proba(self, text):
+        text_embedding = self.get_embeddings(text)
+
+        text_embedding = text_embedding.cpu().numpy().astype('float64')
+
+        cluster = self.kmeans.predict(text_embedding.reshape(1, -1))[0]
+
+        distances = cdist(text_embedding.reshape(1, -1), self.kmeans.cluster_centers_, 'minkowski')[0]
+
+        # Преобразуем расстояния в "вероятности", используя softmax
+        probabilities = np.exp(-distances) / np.sum(np.exp(-distances))
+
+        return cluster, probabilities
 

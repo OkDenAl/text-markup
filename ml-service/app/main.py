@@ -21,6 +21,7 @@ from class_predictor import Classificator, Classificator2
 class Item(BaseModel):
     text: str
 
+
 class KeywordsReq(BaseModel):
     text: str
     keyword_count: int
@@ -37,7 +38,6 @@ model, tokenizer = converter.convert_from_pretrained(
 classificator = Classificator()
 classificator2 = Classificator2()
 
-
 keywords_model = pipeline("feature-extraction", model="KodKio/rubert-finetuned-keywords")
 
 kw_model = KeyBERT(model=keywords_model)
@@ -53,11 +53,11 @@ class TagTransformer:
         self.ner_tagger = NewsNERTagger(emb)
 
     def transform_tag(self, tag):
-        return tag.replace(" ##ии", "ии")\
+        return tag.replace(" ##ии", "ии") \
             .replace(" ##и", "й") \
-            .replace("нии", "ний")\
-            .replace("нои", "ной")\
-            .replace("вои", "вой")\
+            .replace("нии", "ний") \
+            .replace("нои", "ной") \
+            .replace("вои", "вой") \
             .replace(" ##", "") \
             .replace(" , ", ", ") \
             .replace(" . ", ".") \
@@ -147,6 +147,32 @@ async def get_tokens(item: Item):
         print(e)
 
 
+def process_list(input_list):
+    input_list = list(input_list)
+    max_value = max(input_list)
+    max_index = input_list.index(max_value)
+
+    indexes = set()
+    # Condition 1: Maximum value and its index
+    result = [(max_index, max_value)]
+    indexes.add(max_index)
+
+    # Condition 2: Values within max - 0.005 and greater than 0.07
+    for i, value in enumerate(input_list):
+        if ((max_value > 0.071 and 0.07 < value and value >= max_value - 0.0008) or
+            value >= max_value - 0.0008) and i not in indexes:
+            result.append((i, value))
+            indexes.add(i)
+
+    #  Condition 3: Values greater than 0.075
+    for i, value in enumerate(input_list):
+        if value > 0.078 and i not in indexes:
+            result.append((i, value))
+            indexes.add(i)
+
+    return result
+
+
 @app.get("/api/v1/class")
 async def get_class(item: Item):
     # classes = ["Home", "Health", "Celebrities", "Films and Shows", "Incidents", "Researches"] # kmeans_model
@@ -157,17 +183,29 @@ async def get_class(item: Item):
     # classes = ["Crimes", "Food", "Social Security", "Celebrities", "Films & Shows", "Regional news", "Family",
     #            "Incidents", "Weather", "Sports", "Finances", "Health"]  # kmeans_model_12_clusters
     # classes = ["Design", "Foreign Films", "Sports", "Incidents", "Celebrities", "Shows", "Researches", "Health", "Food",
-    #            "Regional news", "Children", "Russian Films", "Doctors", "Home", "Weather"] # kmeans_15_clusters_new_model.pkl
-    classes = ["Sports", "Money", "Food", "Crimes", "Incidents", "Design", "Events", "Celebrities", "Health",
-               "Infrastructure", "Films and Shows", "Politics", "Children and Parents", "Weather", "Regional news"] # kmeans_15_clusters_politics.pkl
+    #           "Regional news", "Children", "Russian Films", "Doctors", "Home",
+    #           "Weather"]  # kmeans_15_clusters_new_model.pkl
+    classes = ["Regional News", "Kids & Parents", "Sports celebrities", "Design", "Health", "Films & Shows", "Incidents", "Diseases",
+               "Celebrities", "Money", "Food", "Home", "Politics", 'Weather', "Sports"]  # kmeans_15_clusterss_2005.pkl
 
     try:
         text = item.text
         # embedding = classificator.get_embeddings([text])
         # class_label = classificator.predict(embedding)
-        embedding = classificator2.get_embeddings(text)
-        class_label = classificator2.predict(embedding)
-        return {"class": classes[class_label]}
+
+        # embedding = classificator2.get_embeddings(text)
+        # class_label = classificator2.predict(embedding)
+
+        cluster, probs = classificator2.predict_cluster_proba(text)
+        clusters_with_probs = process_list(probs)
+
+        res = list()
+        for cluster in clusters_with_probs:
+            res.append(classes[cluster[0]])
+
+        result_string = ", ".join(res)
+        return {"class": result_string}
+
     except Exception as e:
         print(e)
 
