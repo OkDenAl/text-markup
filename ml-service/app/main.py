@@ -35,7 +35,7 @@ model, tokenizer = converter.convert_from_pretrained(
     architecture="BertForTokenClassification"
 )
 
-classificator = Classificator()
+# classificator = Classificator()
 classificator2 = Classificator2()
 
 keywords_model = pipeline("feature-extraction", model="KodKio/rubert-finetuned-keywords")
