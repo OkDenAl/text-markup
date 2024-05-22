@@ -5,13 +5,13 @@ http_server:
   host: cluster-text.ru
   port: 8000
   read_timeout: 30s
-  write_timeout: 30s
+  write_timeout: 600s
   swagger_enabled: true #TODO: когда выйдем в прод не забыть убрать
 
 ml_client:
   port: 8001
   host: ml
-  timeout: 30s
+  timeout: 600s
   circuit_breaker:
     half_open_max_successes: 10
     min_threshold: 10
