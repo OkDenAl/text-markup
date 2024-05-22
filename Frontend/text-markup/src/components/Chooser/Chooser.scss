@@ -1,0 +1,37 @@
+.chooser {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 55%;
+
+    @media screen and (max-width: 461px) {
+        width: 90%;
+    }
+}
+
+.chooser__item {
+    & > input {
+        display: none;
+    }
+
+    &_active > .chooser__item__content {
+        color: var(--blue);
+    }
+}
+
+.chooser__item__content {
+    font-size: 1.8rem;
+    @media screen and (max-width: 461px) {
+        font-size: 1.6rem;
+    }
+
+    color: var(--black);
+    cursor: pointer;
+
+    &:hover, &:active {
+        text-decoration: underline;
+        text-decoration-thickness: 3px;
+    }
+}

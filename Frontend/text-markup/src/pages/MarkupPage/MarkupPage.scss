@@ -1,0 +1,14 @@
+.markup-page {
+    display: grid;
+    grid-template-columns: 1.61fr 1fr;
+    @media screen and (max-width: 461px) {
+        grid-template-columns: 1fr;
+        row-gap: 2rem;        
+    }
+
+    column-gap: 4rem;
+
+    width: 100%;
+
+    padding: 2.5rem 2.5rem 1rem 2.5rem;
+}
