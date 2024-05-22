@@ -2,8 +2,8 @@ fastapi
 uvicorn
 pydantic
 torch
-transformers
-lsg_converter
+transformers==4.40.1
+lsg_converter==0.1.9
 natasha
 joblib
 scikit-learn
