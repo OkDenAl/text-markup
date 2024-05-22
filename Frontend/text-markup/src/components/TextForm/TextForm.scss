@@ -1,0 +1,31 @@
+.text-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 1.5rem;
+
+    width: 100%;
+}
+
+.text-form__textarea {
+    align-self: stretch;
+
+    min-height: 16em;
+    @media screen and (max-width: 461px) {
+        min-height: 10em;
+    }
+
+    resize: vertical;
+
+    font-size: 1rem;
+
+    border-radius: var(--border-radius);
+    padding: 0.7rem 1.2rem;
+
+    color: var(--black);
+}
+
+.text-form__submit {
+    width: 25%;
+}
